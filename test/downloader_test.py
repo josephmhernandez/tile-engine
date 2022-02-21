@@ -3,7 +3,7 @@ import pytest
 # Note: Test Classes must start with "Test"
 # Note: Test Functions must start with "test"
 
-from downloader import Downloader
+from engine.downloader import Downloader
 
 class TestDowloader:
     

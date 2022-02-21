@@ -9,22 +9,12 @@
 # Output: 
 # - Tiff Image of map at high resolution > 300 dpi
 
-from coord import Coord
-from downloader import Downloader
-from assembler import Assembler
-from bbox import Bbox
+from models.coord import Coord
+from engine.downloader import Downloader
+from engine.assembler import Assembler
+from models.bbox import Bbox
 
 import PIL.Image
-
-def test_crop():
-    img = PIL.Image.open('./downloaded_image.png')
-    crop_payload = (0 + 100, 0, img.width-100, img.height)
-    im1 = img.crop(crop_payload)
-    im1.save('.output_test.png')
-
-    if(im1.size == img.size):
-        print('good')
-    pass
 
 if __name__ == "__main__":
     # 1. Use BBox & size of tiles to get the List of tiles we want to download 
@@ -35,22 +25,19 @@ if __name__ == "__main__":
     bbox = [-77.09690093994142,38.86042928143244,-76.97673797607423,38.95393580081098]
 
     tile_size = 0
-    base_url = 'https://api.maptiler.com/maps/voyager/256/{z}/{x}/{y}@2x.png?key=msqCXSKnPannMXvUCPsn#' 
+    # 1024 tiles. 
+    base_url = 'https://api.maptiler.com/maps/voyager/{z}/{x}/{y}@2x.png?key=msqCXSKnPannMXvUCPsn#' 
 
     zoom = 15
-    
-    # bbox = [-77.15698242187501,38.81376360182924,-76.91665649414062,39.00077626698007]
+
     map_box = Bbox(Coord(bbox[0], bbox[3]), Coord(bbox[2], bbox[1]))
 
     new_grid = Downloader.generate_tile_lists(map_box, tile_size, base_url, zoom) 
-    
-    # grid = [4,3]
     print('new_grid')
-    # print(new_grid)
+    print(new_grid)
     Assembler.assemble_image('./src/tile_images/', new_grid, 'downloaded_image')
 
-
     Assembler.crop_image(map_box, './downloaded_image.png', output_path="./cropped_image.png", zoom=zoom)
-    # test_crop()
+
 
 
