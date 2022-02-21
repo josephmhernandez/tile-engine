@@ -9,22 +9,12 @@
 # Output: 
 # - Tiff Image of map at high resolution > 300 dpi
 
-from coord import Coord
-from downloader import Downloader
-from assembler import Assembler
-from bbox import Bbox
+from models.coord import Coord
+from engine.downloader import Downloader
+from engine.assembler import Assembler
+from models.bbox import Bbox
 
 import PIL.Image
-
-def test_crop():
-    img = PIL.Image.open('./downloaded_image.png')
-    crop_payload = (0 + 100, 0, img.width-100, img.height)
-    im1 = img.crop(crop_payload)
-    im1.save('.output_test.png')
-
-    if(im1.size == img.size):
-        print('good')
-    pass
 
 if __name__ == "__main__":
     # 1. Use BBox & size of tiles to get the List of tiles we want to download 

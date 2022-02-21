@@ -7,8 +7,8 @@ import requests
 import shutil
 import mercantile
 import math
-from bbox import Bbox
-from coord import Coord
+from models.bbox import Bbox
+from models.coord import Coord
 
 class Downloader:
 

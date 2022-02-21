@@ -4,8 +4,8 @@ import math
 import decimal
 from os import listdir
 from os.path import isfile, join
-from bbox import Bbox
-from coord import Coord
+from models.bbox import Bbox
+from models.coord import Coord
 import mercantile
 import numpy as np
 class Assembler:
@@ -31,7 +31,7 @@ class Assembler:
 
         # Create a new blank image we will fill in
         composite = PIL.Image.new('RGB', (total_width, total_height))
-        
+
         # Loop over the x and y ranges
         y_offset = 0
         for i in range(0,edge_length_x):
@@ -93,3 +93,6 @@ class Assembler:
 
         im1.save(output_path)
 
+    @staticmethod
+    def add_pin(map_location, pin):
+        pass

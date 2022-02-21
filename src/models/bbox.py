@@ -1,6 +1,6 @@
 
 from unicodedata import decimal
-from coord import Coord
+from models.coord import Coord
 import decimal
 import numpy
 class Bbox:
