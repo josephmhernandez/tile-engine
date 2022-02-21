@@ -5,6 +5,7 @@ click==8.0.4
 idna==3.3
 iniconfig==1.1.1
 mercantile==1.2.1
+numpy==1.22.2
 packaging==21.3
 Pillow==9.0.1
 pluggy==1.0.0
