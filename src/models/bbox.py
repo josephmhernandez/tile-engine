@@ -28,8 +28,25 @@ class Bbox:
     def __str__(self):
         return "[(lon: " + str(self.top_left.lon) + ", lat: " + str(self.top_left.lat) + "), (lon: " + str(self.bottom_right.lon) + ", lat: " + str(self.bottom_right.lat) + ")]" 
 
+    def contains(self, coord : Coord) -> bool:
+        # Checks if a point is contained in the bbox
+        between_lon = False
+        between_lat = False
+
+        if(coord.lon < max(self.top_left.lon,self.bottom_right.lon) and coord.lon >  min(self.top_left.lon,self.bottom_right.lon)):
+            between_lon = True
+        
+        if(coord.lat < max(self.top_left.lat,self.bottom_right.lat) and coord.lat >  min(self.top_left.lat,self.bottom_right.lat)):
+            between_lat = True
+
+        return (between_lat and between_lon)
+
+    def get_total_x_length(self) -> decimal.Decimal:
+        total_x_degree = abs(self.top_left.lon - self.bottom_right.lon)
+        return total_x_degree
     
-    # TO DO: Support multiple constructors wiht __init__(self, *args):
-    # def __init__(self, south, west, north, east):
-    #     self.top_left = Coord(south, west)
-    #     self.bottom_right = Coord(north, east)
+    def get_total_y_length(self) -> decimal.Decimal:
+        total_y_degree = abs(self.top_left.lat - self.bottom_right.lat)
+        return total_y_degree
+    
+

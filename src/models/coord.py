@@ -2,7 +2,7 @@
 
 from pickletools import long1
 import decimal
-import numpy
+import numpy as np
 class Coord:
     def __init__(self, lon, lat):
         self.lon = decimal.Decimal(lon)
@@ -12,4 +12,4 @@ class Coord:
         diff_log = decimal.Decimal(abs(self.lon - other.lon))
         diff_lat = decimal.Decimal(abs(self.lat - other.lat))
 
-        return numpy.array([diff_log, diff_lat])
+        return np.array([diff_log, diff_lat])
