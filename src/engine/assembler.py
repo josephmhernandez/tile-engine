@@ -1,13 +1,19 @@
 
+from cgi import print_form
+from xml.etree.ElementTree import PI
 import PIL.Image
 import math
 import decimal
+from models.map import Map
+from models.pin import Pin
+import engine.engine_utils
 from os import listdir
 from os.path import isfile, join
 from models.bbox import Bbox
 from models.coord import Coord
 import mercantile
 import numpy as np
+
 class Assembler:
 
     @staticmethod
@@ -94,5 +100,30 @@ class Assembler:
         im1.save(output_path)
 
     @staticmethod
-    def add_pin(map_location, pin):
-        pass
+    def add_pin(my_map : Map, output_path: str, pin: Pin) -> None:
+        # Input map path and pin DTO 
+        # Save map to output location with pin on map
+
+        # Open image
+        map_img = PIL.Image.open(my_map.file_path)
+        
+        # Make sure map is expected size
+        map_dim = engine.engine_utils.get_print_pixel_size(my_map.print_format)
+        map_img = map_img.resize(map_dim)
+
+        # Open Pin image Pin utils 
+        pin_img = PIL.Image.open(engine.engine_utils.get_pin_image_path(pin))
+
+        # Calculate location of pin on the map based on size of map image (pixels) 
+        print_pin_location_x, print_pin_location_y = engine.engine_utils.get_pin_location(map_box=my_map.map_box ,pin=pin, print_format=my_map.print_format)
+        
+        # Resize pin image
+        new_pin_dim = engine.engine_utils.get_pin_size(my_map.print_format, pin)
+        pin_img = pin_img.resize(new_pin_dim)
+        pin_img.show()
+        # Place pin image on map 
+        map_img.paste(pin_img, (print_pin_location_x, print_pin_location_y), mask=pin_img) 
+        
+        # Save map 
+        map_img.save(output_path)
+
