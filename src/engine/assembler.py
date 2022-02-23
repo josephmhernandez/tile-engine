@@ -120,8 +120,11 @@ class Assembler:
         # Resize pin image
         new_pin_dim = engine.engine_utils.get_pin_size(my_map.print_format, pin)
         pin_img = pin_img.resize(new_pin_dim)
-        pin_img.show()
+
         # Place pin image on map 
+        # Make sure that pin images are actually located at the bottom, center of the image. 
+        # If there is any space between the pin 'tip' and the bottom pixels, there will be a disconnect 
+        # between the pasted pin and the pin in the UI. 
         map_img.paste(pin_img, (print_pin_location_x, print_pin_location_y), mask=pin_img) 
         
         # Save map 

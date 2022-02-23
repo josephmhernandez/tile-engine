@@ -50,7 +50,7 @@ if __name__ == "__main__":
     # Assembler.crop_image(map_box, './downloaded_image.png', output_path="./cropped_image.png", zoom=zoom)
 
 
-    pin_1 = Pin(icon = Icon.HEART, location=Coord(-77.0369, 38.9072), digital_width=100, digital_height=100, color="hexCode")
+    pin_1 = Pin(icon = Icon.HEART, location=Coord(-77.0369, 38.9072), digital_width=25, digital_height=25, color="hexCode")
 
     map = Map(
         map_box=map_box, 
