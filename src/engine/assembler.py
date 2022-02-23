@@ -101,6 +101,9 @@ class Assembler:
 
     @staticmethod
     def add_pin(my_map : Map, output_path: str, pin: Pin) -> None:
+        # Make sure that pin images are actually located at the bottom, center of the image. 
+        # If there is any space between the pin 'tip' and the bottom pixels, there will be a disconnect 
+        # between the pasted pin and the pin in the UI. 
         # Input map path and pin DTO 
         # Save map to output location with pin on map
 
@@ -122,9 +125,6 @@ class Assembler:
         pin_img = pin_img.resize(new_pin_dim)
 
         # Place pin image on map 
-        # Make sure that pin images are actually located at the bottom, center of the image. 
-        # If there is any space between the pin 'tip' and the bottom pixels, there will be a disconnect 
-        # between the pasted pin and the pin in the UI. 
         map_img.paste(pin_img, (print_pin_location_x, print_pin_location_y), mask=pin_img) 
         
         # Save map 
