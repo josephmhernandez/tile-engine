@@ -4,7 +4,7 @@ from pickletools import long1
 import decimal
 import numpy as np
 class Coord:
-    def __init__(self, lon, lat):
+    def __init__(self, lon : decimal, lat : decimal):
         self.lon = decimal.Decimal(lon)
         self.lat = decimal.Decimal(lat)
 

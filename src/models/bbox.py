@@ -4,7 +4,7 @@ from models.coord import Coord
 import decimal
 import numpy
 class Bbox:
-    def __init__(self, top_left, bottom_right):
+    def __init__(self, top_left : Coord, bottom_right: Coord):
         self.top_left = top_left
         self.bottom_right = bottom_right
 

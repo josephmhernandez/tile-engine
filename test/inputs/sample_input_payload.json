@@ -1,0 +1,15 @@
+{
+    "bbox": [-77.07801818847658,38.95527071579662,-76.99562072753908, 38.859092581794336],
+    "map_style": "debug_default_map", 
+    "print_dimension": "Canvas_24_36",
+    "zoom": 15,
+    "pins": [
+        {
+            "icon": "heart",
+            "location": [-77.0369, 38.9072],
+            "digital_width": 100,
+            "digital_height": 100,
+            "color": "#000000"
+        }
+    ]
+}
