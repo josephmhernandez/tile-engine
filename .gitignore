@@ -131,3 +131,6 @@ dmypy.json
 # Downloaded images
 *.png
 src/tile_images/*
+
+.DS_Store
+test/.DS_Store
