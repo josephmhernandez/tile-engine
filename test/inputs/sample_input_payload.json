@@ -6,9 +6,9 @@
     "pins": [
         {
             "icon": "heart",
-            "location": [-77.0369, 38.9072],
-            "digital_width": 100,
-            "digital_height": 100,
+            "location": [-77.043443, 38.909629],
+            "digital_width": 50,
+            "digital_height": 50,
             "color": "#000000"
         }
     ]
