@@ -76,28 +76,12 @@ def get_pin_location(map_box: Bbox, pin: Pin, print_format: PrintFormat) -> tupl
     logging.info("print width: " + str(pf_width) + " height: " + str(pf_height))
     logging.info("\tpixel location before pin image adjustment")
     logging.info("\tpixel location of pin x: " + str(x_pixel_location) + " y: " + str(y_pixel_location))
-
-    # TO DO: Delete this
-    # REd Line for pre adjusted 
-    map_img = PIL.Image.open("all_skate_image.png")
-    draw = PIL.ImageDraw.Draw(map_img)
-    draw.line(((x_pixel_location, y_pixel_location), (x_pixel_location, y_pixel_location+1000)), fill=(255, 0, 0))
-    draw.line(((x_pixel_location, y_pixel_location), (x_pixel_location+1000, y_pixel_location)), fill=(255, 0, 0))
     
-
     # Adjust for where the pin should actually go on print image 
     adj_x_pixels = round(x_pixel_location - (get_pin_size(print_format, pin)[0] * .5))
     adj_y_pixels = round(y_pixel_location - (get_pin_size(print_format, pin)[1]))
     logging.info("pin image location after adjustment")
     logging.info("\tlocation pin image paste x: " + str(adj_x_pixels) + " y: " + str(adj_y_pixels))
     
-
-    # TO DO: Delete this
-    #Blue lines intersection for adjusted new location of "picture".  
-    draw = PIL.ImageDraw.Draw(map_img)
-    draw.line(((adj_x_pixels, adj_y_pixels), (adj_x_pixels, adj_y_pixels+1000)), fill=(0, 0, 255))
-    draw.line(((adj_x_pixels, adj_y_pixels), (adj_x_pixels + 1000, adj_y_pixels)), fill=(0, 0, 255))
-    map_img.save("locationColors.png")
-
     return (adj_x_pixels, adj_y_pixels)
 
