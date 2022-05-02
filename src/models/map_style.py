@@ -44,8 +44,10 @@ def get_map_style_specifications(str_style: string):
         # TO DO: Make this text an input from the json object. 
         # so bump this out of 'map_style' and have an 'optional' tag 
         # idk name yet but for text perosnalizations. 
-        context['text'] = ["MADHATTER", '- Washington DC -']
-        context['transparency'] = True
+
+        #Uncomment for 
+        # context['text'] = ["MADHATTER", '- Washington DC -']
+        # context['transparency'] = True
     else:
         logging.error("No matching map style")
         raise ValueError("No matching map style")

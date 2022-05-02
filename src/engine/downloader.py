@@ -5,10 +5,10 @@ import requests
 import shutil
 import mercantile
 import math
-from models.bbox import Bbox
-from models.coord import Coord
+from src.models.bbox import Bbox
+from src.models.coord import Coord
 import os 
-from settings import TEMP_TILE_IMAGE_FOLDER
+from src.settings import TEMP_TILE_IMAGE_FOLDER
 class Downloader:
 
     # @staticmethod
@@ -83,4 +83,5 @@ class Downloader:
         if len(os.listdir('src/tile_images/')) != count:
             raise RuntimeError('inncorrect number of files downloaded to assemble the image')
 
+        logging.info("\tDownloaded tile grid size: " + str(abs(x_tile_range[0] - x_tile_range[1])+1) + ", " + str(abs(y_tile_range[0] - y_tile_range[1])+1))
         return [abs(x_tile_range[0] - x_tile_range[1])+1, abs(y_tile_range[0] - y_tile_range[1])+1]

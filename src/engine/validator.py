@@ -1,14 +1,15 @@
 
 import logging 
 from json import load
+from re import I
 from schema import Schema, And, Use, Optional, SchemaError
 
-from models.value_validator import ValueValidator
-from models.icon import Icon
-from models.map import Map
-from models.pin import Pin
-from models.print_format import PrintFormat
-from models.border_style import Border
+from src.models.value_validator import ValueValidator
+from src.models.icon import Icon
+from src.models.map import Map
+from src.models.pin import Pin
+from src.models.print_format import PrintFormat
+from src.models.border_style import Border
 
 
 def validate_schema(input_payload_dict: dict):
@@ -33,8 +34,25 @@ def validate_schema(input_payload_dict: dict):
 
     return err_list
 
+def validate_json_attributes(input_payload):
+    context = {}
+    try:
+        context['bbox'] = ValueValidator.extract_valid_bbox_value(input_payload['bbox'])
+        context['map_style'] = ValueValidator.extract_valid_map_style_value(input_payload['map_style'])
+        context['map_dimension'] = ValueValidator.extract_valid_print_dimension_value(input_payload['print_dimension'])
+        context['zoom'] = ValueValidator.extract_valid_zoom_value(input_payload['zoom'])
+        # Optional Elements
+        if('pins' in input_payload):
+            context['pins'] = ValueValidator.extract_valid_pins_value(input_payload['pins'])
+        else: 
+            context['pins'] = None
+    except Exception as e:
+        logging.error("This is an error that wasn't caught in the ValueValidator...")
+        logging.error(e, exc_info=True)
+        raise ValueError("This is an error that wasn't caught in the ValueValidator...")
+    return context 
 
-def validate_payload(args) -> str:
+def validate_payload(args) -> dict:
     # return context obejct for tile-engine
     context = {}
     logging.info("length of args " + str(len(args)))
@@ -67,20 +85,8 @@ def validate_payload(args) -> str:
     #   - Validate pins 
 
     #Validate values of json attributes
-    try:
-        context['bbox'] = ValueValidator.extract_valid_bbox_value(input_payload['bbox'])
-        context['map_style'] = ValueValidator.extract_valid_map_style_value(input_payload['map_style'])
-        context['map_dimension'] = ValueValidator.extract_valid_print_dimension_value(input_payload['print_dimension'])
-        context['zoom'] = ValueValidator.extract_valid_zoom_value(input_payload['zoom'])
-        # Optional Elements
-        if('pins' in input_payload):
-            context['pins'] = ValueValidator.extract_valid_pins_value(input_payload['pins'])
-        else: 
-            context['pins'] = None
-    except Exception as e:
-        logging.error("This is an error that wasn't caught in the ValueValidator...")
-        logging.error(e, exc_info=True)
-        raise ValueError("This is an error that wasn't caught in the ValueValidator...")
-
+    context = validate_json_attributes(input_payload=input_payload)
         
     return context
+
+
