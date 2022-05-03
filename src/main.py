@@ -46,8 +46,8 @@ from schema import Schema, And, Use, Optional, SchemaError
 def run_tile_engine(context) -> int:
 
     #Run Downloader
-    logging.info("Running Downloader...")
     try: 
+        logging.info("Running Downloader...")
         new_grid = Downloader.generate_tile_lists(context)
     except Exception as e:
         logging.error("Downloader returned an error")
@@ -61,6 +61,10 @@ def run_tile_engine(context) -> int:
         logging.info("Assemble images")
         Assembler.assemble_image(folder_path=settings.TEMP_TILE_IMAGE_FOLDER, tile_grid=new_grid, output_img_name=settings.IMAGE_FILE_NAME)
         
+        # Crop the image to the specific bbox
+        logging.info("Croppig downloaded images to bbox display")
+        Assembler.crop_image(context['bbox'], img_path=settings.IMAGE_FILE_NAME, output_path=settings.IMAGE_FILE_NAME, zoom=context['zoom'])
+
         # Add pins to map
         logging.info("Add pins to map " + settings.IMAGE_FILE_NAME)
         if(context['pins'] != None):
@@ -71,7 +75,7 @@ def run_tile_engine(context) -> int:
         
         # Add map style 
         logging.info("adding style to the map " + str(context['map_style']))
-        if(context['map_style']['transparency'] is True):
+        if('transparency' in context['map_style'] and context['map_style']['transparency'] is True):
             logging.info("Applying transparency effect to map")
             Assembler.add_transparency(img_path=settings.IMAGE_FILE_NAME, img_output_path=settings.IMAGE_FILE_NAME)
         else:
@@ -100,7 +104,11 @@ def run_tile_engine(context) -> int:
 def main(args) -> int: 
     #Return engine tile code. 
     #Set up logger
-    logging.basicConfig(filename=settings.LOG_FILENAME, level=logging.INFO)
+    logging.basicConfig(
+        format='%(asctime)s %(levelname)-8s %(message)s',
+        filename=settings.LOG_FILENAME, 
+        level=logging.INFO, 
+        datefmt='%Y-%m-%d %H:%M:%S')
     
     #Validate payload
     logging.info("Validating payload...")

@@ -12,3 +12,7 @@ TILE_API_KEY=""
 
 #Logging
 LOG_FILENAME="logs.log"
+
+
+#Testing
+ASSEMBLER_TEST_FOLDER="test/assembler_unit_test_attachments/"

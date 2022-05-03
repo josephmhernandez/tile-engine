@@ -10,19 +10,17 @@ import PIL.Image
 from PIL import ImageOps, ImageDraw, ImageFont
 import math
 import decimal
-import settings
 from pyparsing import Regex
-from models.map import Map
-from models.pin import Pin
-import engine.engine_utils
+from src.models.pin import Pin
+import src.engine.engine_utils
 from os import listdir
 from os.path import isfile, join
-from models.bbox import Bbox
-from models.coord import Coord
+from src.models.bbox import Bbox
+from src.models.coord import Coord
 import mercantile
 import numpy as np
 from regex import search
-from models.border_style import Border
+from src.models.border_style import Border
 import numpy as np
 
 
@@ -32,7 +30,8 @@ class Assembler:
     def assemble_image(folder_path, tile_grid, output_img_name):
         # Given a folder path, concatenate the map image from these tile images.
         # tile_grid [x, y] Number of tiles in grid
-
+        logging.info("assembling images from " + folder_path)
+        logging.info("size of image " + str(tile_grid))
         # Make a list of the image names
         image_files = [folder_path + f for f in listdir(folder_path)]
         # Open the image set using pillow
@@ -65,6 +64,8 @@ class Assembler:
 
         # Save the final image
         composite.save('./' + output_img_name)
+        logging.info("output image: " + output_img_name)
+        
 
     @staticmethod
     def check_image_folder_exists(folder_path):
@@ -73,6 +74,7 @@ class Assembler:
 
     @staticmethod
     def crop_image(map_box, img_path, output_path, zoom):
+        logging.info("cropping the image to the correct size. Input: " + img_path + "; Output: " + output_path)
 
         # Open Image
         img = PIL.Image.open(img_path)
@@ -114,39 +116,46 @@ class Assembler:
                         img.width - pixel_diff_right, img.height - pixel_diff_bottom)
         im1 = img.crop(crop_payload)
 
+        logging.info("Save cropped image to " + output_path)
         im1.save(output_path)
 
     @staticmethod
     def add_pin(context, input_path: str, output_path: str, pin: Pin) -> None:
         # Input map path and pin DTO
         # Save map to output location with pin on map
-
+        logging.info(context)
         # Open image
         map_img = PIL.Image.open(input_path)
 
         # Make sure map is expected size
-        map_dim = engine.engine_utils.get_print_pixel_size(context['map_dimension'])
+        map_dim = src.engine.engine_utils.get_print_pixel_size(context['map_dimension'])
         map_img = map_img.resize(map_dim)
 
+        logging.info("current map size: " + str(map_dim))
+
         # Open Pin image Pin utils
-        pin_img = PIL.Image.open(engine.engine_utils.get_pin_image_path(pin))
+        pin_img = PIL.Image.open(src.engine.engine_utils.get_pin_image_path(pin))
 
         # Calculate location of pin on the map based on size of map image (pixels)
-        print_pin_location_x, print_pin_location_y = engine.engine_utils.get_pin_location(
+        print_pin_location_x, print_pin_location_y = src.engine.engine_utils.get_pin_location(
             map_box=context['bbox'], pin=pin, print_format=context['map_dimension'])
 
+        logging.info("pin location on print x: " + str(print_pin_location_x))
+        logging.info("pin location on print y: " + str(print_pin_location_y))
+
+        
         # Resize pin image
-        new_pin_dim = engine.engine_utils.get_pin_size(
+        new_pin_dim = src.engine.engine_utils.get_pin_size(
             context['map_dimension'], pin)
+        logging.info("pin pixel size on map " + str(new_pin_dim))
         pin_img = pin_img.resize(new_pin_dim)
 
-        # pin_img.show()
         
         # Place pin image on map
         map_img.paste(pin_img, (print_pin_location_x,
                       print_pin_location_y), mask=pin_img)
-
-        # Save map
+        map_img.save("withPin.png")
+        # Save map with pin saved as " + output_path)
         map_img.save(output_path)
 
     @staticmethod

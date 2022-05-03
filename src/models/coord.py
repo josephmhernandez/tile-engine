@@ -13,3 +13,6 @@ class Coord:
         diff_lat = decimal.Decimal(abs(self.lat - other.lat))
 
         return np.array([diff_log, diff_lat])
+
+    def __str__(self):
+        return "lon: " + str(self.lon) + ", lat: " + str(self.lat)

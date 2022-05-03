@@ -1,9 +1,10 @@
 
-from models.bbox import Bbox
-from models.icon import Icon
-from models.pin import Pin
-from models.print_format import PrintFormat
-
+import PIL
+from src.models.bbox import Bbox
+from src.models.icon import Icon
+from src.models.pin import Pin
+from src.models.print_format import PrintFormat
+import logging
 
 def get_leaflet_digital_pixel_size(pf : PrintFormat) -> tuple:
     # Return the sizes of the digital display. Used to calculate proportion multiplier for digital to print conversion   
@@ -72,10 +73,15 @@ def get_pin_location(map_box: Bbox, pin: Pin, print_format: PrintFormat) -> tupl
     pf_width, pf_height = get_print_pixel_size(print_format)
     x_pixel_location = round(abs(((pin.location.lon - map_box.top_left.lon) / total_x_bbox) * pf_width))
     y_pixel_location = round(abs(((pin.location.lat - map_box.top_left.lat) / total_y_bbox) * pf_height))
+    logging.info("print width: " + str(pf_width) + " height: " + str(pf_height))
+    logging.info("\tpixel location before pin image adjustment")
+    logging.info("\tpixel location of pin x: " + str(x_pixel_location) + " y: " + str(y_pixel_location))
     
     # Adjust for where the pin should actually go on print image 
     adj_x_pixels = round(x_pixel_location - (get_pin_size(print_format, pin)[0] * .5))
     adj_y_pixels = round(y_pixel_location - (get_pin_size(print_format, pin)[1]))
+    logging.info("pin image location after adjustment")
+    logging.info("\tlocation pin image paste x: " + str(adj_x_pixels) + " y: " + str(adj_y_pixels))
     
     return (adj_x_pixels, adj_y_pixels)
 

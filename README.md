@@ -5,7 +5,8 @@ source env/bin/activate
 
 pip install -r requirements.txt
 
-python src/main.py
+python src/main.py test/inputs/sample_input_payload.json 
+
 
 TO DO List: 
 1. Ctrl shift I thing to automatically fix spacing stuff. 
