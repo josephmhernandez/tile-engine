@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
-from src.models.icon import Icon
-from src.models.coord import Coord
+from models.icon import Icon
+from models.coord import Coord
 
 class IterableBorder(type):
     def __iter__(cls):
