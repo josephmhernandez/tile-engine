@@ -10,16 +10,16 @@ from PIL import ImageOps, ImageDraw, ImageFont
 import math
 import decimal
 from pyparsing import Regex
-from models.pin import Pin
-import engine.engine_utils
+from src.models.pin import Pin
+import src.engine.engine_utils
 from os import listdir
 from os.path import isfile, join
-from models.bbox import Bbox
-from models.coord import Coord
+from src.models.bbox import Bbox
+from src.models.coord import Coord
 import mercantile
 import numpy as np
 from regex import search
-from models.border_style import Border
+from src.models.border_style import Border
 import numpy as np
 
 
@@ -130,19 +130,19 @@ class Assembler:
         map_img = PIL.Image.open(input_path)
 
         # Make sure map is expected size
-        map_dim = engine.engine_utils.get_print_pixel_size(context["map_dimension"])
+        map_dim = src.engine.engine_utils.get_print_pixel_size(context["map_dimension"])
         map_img = map_img.resize(map_dim)
 
         logging.info("current map size: " + str(map_dim))
 
         # Open Pin image Pin utils
-        pin_img = PIL.Image.open(engine.engine_utils.get_pin_image_path(pin))
+        pin_img = PIL.Image.open(src.engine.engine_utils.get_pin_image_path(pin))
 
         # Calculate location of pin on the map based on size of map image (pixels)
         (
             print_pin_location_x,
             print_pin_location_y,
-        ) = engine.engine_utils.get_pin_location(
+        ) = src.engine.engine_utils.get_pin_location(
             map_box=context["bbox"], pin=pin, print_format=context["map_dimension"]
         )
 
@@ -150,7 +150,9 @@ class Assembler:
         logging.info("pin location on print y: " + str(print_pin_location_y))
 
         # Resize pin image
-        new_pin_dim = engine.engine_utils.get_pin_size(context["map_dimension"], pin)
+        new_pin_dim = src.engine.engine_utils.get_pin_size(
+            context["map_dimension"], pin
+        )
         logging.info("pin pixel size on map " + str(new_pin_dim))
         pin_img = pin_img.resize(new_pin_dim)
 

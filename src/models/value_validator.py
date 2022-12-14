@@ -1,22 +1,21 @@
-
-from models.bbox import Bbox
-from models.coord import Coord
-from models.map_style import MapStyle
-from models.map_style import get_map_style_specifications
-from models.pin import Pin
+from src.models.bbox import Bbox
+from src.models.coord import Coord
+from src.models.map_style import MapStyle
+from src.models.map_style import get_map_style_specifications
+from src.models.pin import Pin
 from typing import List
 import logging
 
-from models.print_format import PrintFormat
+from src.models.print_format import PrintFormat
 
 
 class ValueValidator:
     @staticmethod
     def extract_valid_bbox_value(bbox_values: list) -> Bbox:
         try:
-            #TO DO: 
+            # TO DO:
             # Validate Bbox values
-            
+
             # Return Bbox value
             tl = Coord(bbox_values[0], bbox_values[1])
             br = Coord(bbox_values[2], bbox_values[3])
@@ -28,42 +27,44 @@ class ValueValidator:
     @staticmethod
     def extract_valid_map_style_value(map_style: str) -> dict:
         logging.info("extract map style specifications")
-        # TO DO: Make this method call cleaner. pls. 
+        # TO DO: Make this method call cleaner. pls.
         rtn_style = get_map_style_specifications(map_style)
-        return rtn_style 
-        
+        return rtn_style
+
     @staticmethod
     def extract_valid_print_dimension_value(print_dimension: str) -> PrintFormat:
         logging.info("extract print dimension")
-        try: 
+        try:
             print_format = PrintFormat[print_dimension]
         except Exception as e:
-            logging.error("print_dimension couldn't be converted to correct PrintFormat:" + print_dimension)
+            logging.error(
+                "print_dimension couldn't be converted to correct PrintFormat:"
+                + print_dimension
+            )
             raise e
 
         return print_format
 
     @staticmethod
     def extract_valid_pins_value(pins: List[Pin]) -> List[Pin]:
-        #TO DO
-        #   - Validate each pin value 
+        # TO DO
+        #   - Validate each pin value
         #       - Ensure that all coordinate pairs are inside the bbox
-        #   - attach a hex color to each map style 
+        #   - attach a hex color to each map style
         #   - attach location of each pin file path
-        # file path, color, coordinate points (lon, lat) 
-        
+        # file path, color, coordinate points (lon, lat)
+
         logging.info("Validating pin(s)")
 
         return pins
 
     @staticmethod
     def extract_valid_zoom_value(zoom: int) -> int:
-        if(zoom > 15 or zoom < 8):
+        if zoom > 15 or zoom < 8:
             logging.error("zoom is outside range [ ] : " + str(zoom))
             raise ValueError("zoom is outside range : ")
-        
-        return zoom 
-        
+
+        return zoom
 
     # @staticmethod
     # def validate_input_values(input_payload) -> bool:
@@ -82,11 +83,9 @@ class ValueValidator:
     #     if(not ValueValidator.is_valid_print_dimension_value(input_payload['print_dimension'])):
     #         is_valid_input = False
     #         logging.debug("map dimesnion value isn't valid: {}".format(input_payload['print_dimension']))
-        
+
     #     if(not ValueValidator.is_valid_pins_value(input_payload['pins'])):
     #         is_valid_input = False
     #         logging.debug("map pins values aren't valid")
-            
-    #     return is_valid_input
 
-    
+    #     return is_valid_input
