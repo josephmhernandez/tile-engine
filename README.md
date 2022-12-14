@@ -2,15 +2,19 @@
 
 # Commands
 
+pipenv shell # Activate virtual environment
+
 # Check for vulnerabilities
 
 pipenv check
 
 # Run Tests
 
+pytest
+
 # Run the application
 
-pipenv run python3 src/main.py test/inputs/sample_input_payload.json
+pipenv run python3 main.py test/inputs/sample_input_payload.json
 
 # Pipenv guide: https://realpython.com/pipenv-guide/
 

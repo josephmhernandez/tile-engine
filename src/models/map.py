@@ -1,9 +1,10 @@
 from dataclasses import dataclass
 from typing import List
-from models.border_style import BorderStyle
+from src.models.border_style import BorderStyle
 
-from models.pin import Pin
-from models.print_format import PrintFormat
+from src.models.pin import Pin
+from src.models.print_format import PrintFormat
+from src.models.bbox import Bbox
 
 
 @dataclass

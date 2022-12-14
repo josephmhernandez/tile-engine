@@ -1,8 +1,8 @@
 import PIL
-from models.bbox import Bbox
-from models.icon import Icon
-from models.pin import Pin
-from models.print_format import PrintFormat
+from src.models.bbox import Bbox
+from src.models.icon import Icon
+from src.models.pin import Pin
+from src.models.print_format import PrintFormat
 import logging
 
 
