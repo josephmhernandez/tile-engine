@@ -13,7 +13,6 @@ from multiprocessing.dummy import Array
 from optparse import Option
 import sys
 
-from pyparsing import Or
 from models.value_validator import ValueValidator
 import settings
 import engine.engine_code as engine_code
@@ -25,9 +24,6 @@ from models.coord import Coord
 from engine.downloader import Downloader
 from engine.assembler import Assembler
 from models.bbox import Bbox
-import numpy as np
-
-import PIL.Image
 
 from engine.validator import validate_payload
 

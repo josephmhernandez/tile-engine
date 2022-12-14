@@ -5,10 +5,10 @@ import requests
 import shutil
 import mercantile
 import math
-from src.models.bbox import Bbox
-from src.models.coord import Coord
+from models.bbox import Bbox
+from models.coord import Coord
 import os 
-from src.settings import TEMP_TILE_IMAGE_FOLDER
+from settings import TEMP_TILE_IMAGE_FOLDER
 class Downloader:
 
     # @staticmethod

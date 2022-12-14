@@ -4,12 +4,12 @@ from json import load
 from re import I
 from schema import Schema, And, Use, Optional, SchemaError
 
-from src.models.value_validator import ValueValidator
-from src.models.icon import Icon
-from src.models.map import Map
-from src.models.pin import Pin
-from src.models.print_format import PrintFormat
-from src.models.border_style import Border
+from models.value_validator import ValueValidator
+from models.icon import Icon
+from models.map import Map
+from models.pin import Pin
+from models.print_format import PrintFormat
+from models.border_style import Border
 
 
 def validate_schema(input_payload_dict: dict):
