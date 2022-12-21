@@ -27,6 +27,7 @@ toml = "==0.10.2"
 tomli = "==2.0.1"
 urllib3 = "==1.26.8"
 schema = "*"
+glob2 = "*"
 
 [dev-packages]
 black = "*"

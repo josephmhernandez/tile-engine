@@ -15,7 +15,7 @@ import sys
 
 from src.models.value_validator import ValueValidator
 import settings
-import src.engine.engine_code as engine_code
+import src.engine.engine_status_codes as engine_status_codes
 from cgi import print_form
 from stringprep import map_table_b2
 from turtle import st
@@ -47,7 +47,7 @@ def run_tile_engine(context) -> int:
     except Exception as e:
         logging.error("Downloader returned an error")
         logging.critical(e, exc_info=True)
-        return engine_code.DOWNLOADER_FAILURE
+        return engine_status_codes.DOWNLOADER_FAILURE
 
     # Run Assembler (Border, style, wording, etc.)
     logging.info("Running Assembler...")
@@ -117,9 +117,9 @@ def run_tile_engine(context) -> int:
     except Exception as e:
         logging.error("Assembler returned an error")
         logging.critical(e, exc_info=True)
-        return engine_code.ASSEMBLER_FAILURE
+        return engine_status_codes.ASSEMBLER_FAILURE
 
-    return engine_code.ENGINE_SUCCESS
+    return engine_status_codes.ENGINE_SUCCESS
 
 
 def main(args) -> int:
@@ -161,7 +161,7 @@ if __name__ == "__main__":
     except Exception as e:
         # Maybe this will always run?
         logging.critical(e, exc_info=True)
-        sys.exit(engine_code.ENGINE_FAILURE_CRITICAL)
+        sys.exit(engine_status_codes.ENGINE_FAILURE_CRITICAL)
 
     # Assembler.add_transparency("final_image.png")
     # print('starting border...')

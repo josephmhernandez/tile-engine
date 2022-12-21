@@ -5,8 +5,7 @@ import logging
 from tkinter import font
 from typing import List
 from xml.etree.ElementTree import PI
-import PIL.Image
-from PIL import ImageOps, ImageDraw, ImageFont
+from PIL import ImageOps, ImageDraw, ImageFont, Image
 import math
 import decimal
 from pyparsing import Regex
@@ -21,6 +20,7 @@ import numpy as np
 from regex import search
 from src.models.border_style import Border
 import numpy as np
+from src.style_constants import map_style_text, map_font_path
 
 
 class Assembler:
@@ -33,7 +33,7 @@ class Assembler:
         # Make a list of the image names
         image_files = [folder_path + f for f in listdir(folder_path)]
         # Open the image set using pillow
-        images = [PIL.Image.open(x) for x in image_files]
+        images = [Image.open(x) for x in image_files]
 
         # Calculate the number of image tiles in each direction
         edge_length_x = tile_grid[0]
@@ -45,7 +45,7 @@ class Assembler:
         total_height = height * edge_length_y
 
         # Create a new blank image we will fill in
-        composite = PIL.Image.new("RGB", (total_width, total_height))
+        composite = Image.new("RGB", (total_width, total_height))
 
         # Loop over the x and y ranges
         y_offset = 0
@@ -54,7 +54,7 @@ class Assembler:
             for j in range(0, edge_length_y):
                 # Open up the image file and paste it into the composed
                 # image at the given offset position
-                tmp_img = PIL.Image.open(folder_path + str(i) + "." + str(j) + ".png")
+                tmp_img = Image.open(folder_path + str(i) + "." + str(j) + ".png")
                 composite.paste(tmp_img, (y_offset, x_offset))
                 x_offset += width  # Update the width
             y_offset += height  # Update the height
@@ -78,7 +78,7 @@ class Assembler:
         )
 
         # Open Image
-        img = PIL.Image.open(img_path)
+        img = Image.open(img_path)
         img_width, img_height = img.size
 
         # Create tile_box (it is larger than map box)
@@ -127,7 +127,7 @@ class Assembler:
         # Save map to output location with pin on map
         logging.info(context)
         # Open image
-        map_img = PIL.Image.open(input_path)
+        map_img = Image.open(input_path)
 
         # Make sure map is expected size
         map_dim = src.engine.engine_utils.get_print_pixel_size(context["map_dimension"])
@@ -136,7 +136,7 @@ class Assembler:
         logging.info("current map size: " + str(map_dim))
 
         # Open Pin image Pin utils
-        pin_img = PIL.Image.open(src.engine.engine_utils.get_pin_image_path(pin))
+        pin_img = Image.open(src.engine.engine_utils.get_pin_image_path(pin))
 
         # Calculate location of pin on the map based on size of map image (pixels)
         (
@@ -193,7 +193,7 @@ class Assembler:
             logging.info("no borders to add to map")
             return
 
-        img = PIL.Image.open(input_path).convert("RGBA")
+        img = Image.open(input_path).convert("RGBA")
 
         for border in borders:
             # if isinstance(border.width, int) and Assembler.isHexColor(border.color):
@@ -209,7 +209,7 @@ class Assembler:
         # calculate range of pixels to loop through and change transparency
         # calculatre the step of each pixel change
         # TO DO: Change .75 and .95 to inputs for fading.
-        img = PIL.Image.open(img_path).convert("RGBA")
+        img = Image.open(img_path).convert("RGBA")
 
         arr = np.array(img)
         alpha = arr[:, :, 3]
@@ -217,22 +217,198 @@ class Assembler:
         alpha[:] = np.interp(
             np.arange(n), [0, 0.75 * n, 0.95 * n, n], [255, 255, 0, 0]
         )[:, np.newaxis]
-        img = PIL.Image.fromarray(arr, mode="RGBA")
+        img = Image.fromarray(arr, mode="RGBA")
         img.save(img_output_path)
 
     @staticmethod
-    def add_text(img_path: str, out_path: str, msg: list):
+    def create_image(size, bgColor, message, font, fontColor):
+        """
+        Creates an image block with the given message
+        """
+        W, H = size
+        image = Image.new("RGB", size, bgColor)
+        draw = ImageDraw.Draw(image)
+        _, _, w, h = draw.textbbox((0, 0), message, font=font)
+        draw.text(((W - w) / 2, (H - h) / 2), message, font=font, fill=fontColor)
+        return image
+
+    @staticmethod
+    def concatenate_images_v(img1, img2, img3=None):
+        """
+        Concatenates two images vertically
+        """
+        dst = Image.new("RGB", (max(img1.width, img2.width), img1.height + img2.height))
+        dst.paste(img1, (0, 0))
+        dst.paste(img2, (0, img1.height))
+
+        if img3:
+            logging.debug("concatenating 3 images")
+            rtnImg = Image.new(
+                "RGB", (max(dst.width, img3.width), dst.height + img3.height)
+            )
+            rtnImg.paste(dst, (0, 0))
+            rtnImg.paste(img3, (0, dst.height))
+            return rtnImg
+        else:
+            logging.debug("concatenating 2 images")
+            return dst
+
+    @staticmethod
+    def add_text(img_path: str, out_path: str, text: dict, frame_size: str, style: str):
         # TO DO: change this function to take in multiple messages and error check
-        # better payload
-        # Constants for positioning based off of how many messages in list.
-        # Size of Font based on the number of characters in the message
+        # Constants for positioning based off of how many messages in dict.
+        # img_path: path to image to add text to
+        # out_path: path to save image with text
+        # frame_size: _24_36
+        """
+        img_path: "path/to/image.png"
+        out_path: "path/to/output.png"
+        frame_size: _24_36
+        text = {
+            "primary": "LargeText",
+            "secondary": "MediumText",
+            "coordinate": "DelimitedDegreeMinutesSecondsWDirection",
+        }
+        style: "basic"
+        """
 
-        img = PIL.Image.open(img_path)
+        # Total size of image block
+        map_img = Image.open(img_path)
+        map_width, map_height = map_img.size
 
-        width, height = img.size
-        img = PIL.Image.open(img_path).convert("RGBA")
-        draw = PIL.ImageDraw.Draw(img)
-        myFont = ImageFont.truetype("src/fonts/texgyreadventor-regular.otf", 1100)
+        # Not sure if we switch map width the beginning etc
+        width = map_width
+        logging.debug(f"text block width will be: {width}")
+
+        # Generate the primary, secondary, coordinate text blocks
+        primary_img = None
+        secondary_img = None
+        coordinate_img = None
+
+        style_dict = map_style_text[style]
+        text_size_dict = style_dict[frame_size]
+        if text["primary"] and text["primary"] != "":
+            logging.debug(f'primary text found: {text["primary"]}')
+            primary_font = ImageFont.truetype(
+                map_font_path[style_dict["primary_font"]],
+                text_size_dict["primary_font_size"],
+            )
+            primary_img = Assembler.create_image(
+                (width, text_size_dict["primary_text_block"]),
+                "white",
+                text["primary"],
+                primary_font,
+                "black",
+            )
+            primary_img.save("temp_output/primary-text.png")
+        if text["secondary"] and text["secondary"] != "":
+            logging.debug(f'secondary text found: {text["secondary"]}')
+            secondary_font = ImageFont.truetype(
+                map_font_path[style_dict["secondary_font"]],
+                text_size_dict["secondary_font_size"],
+            )
+            secondary_img = Assembler.create_image(
+                (width, text_size_dict["secondary_text_block"]),
+                "white",
+                text["secondary"],
+                secondary_font,
+                "black",
+            )
+            secondary_img.save("temp_output/secondary-text.png")
+        if text["coordinate"] and text["coordinate"] != "":
+            logging.debug(f'coordinate text found: {text["coordinate"]}')
+            coordinate_font = ImageFont.truetype(
+                map_font_path[style_dict["coordinate_font"]],
+                text_size_dict["coordinate_font_size"],
+            )
+            coordinate_img = Assembler.create_image(
+                (width, text_size_dict["coordinate_text_block"]),
+                "white",
+                text["coordinate"],
+                coordinate_font,
+                "black",
+            )
+            coordinate_img.save("temp_output/coordinate-text.png")
+
+        if primary_img is None and secondary_img is None and coordinate_img is None:
+            logging.debug(
+                "all text blocks are None, no text to add. Something might be wrong."
+            )
+            return
+
+        final_img = None
+        if primary_img is None:
+            if secondary_img is None:
+                final_img = coordinate_img
+            else:
+                if coordinate_img is None:
+                    final_img = secondary_img
+                else:
+                    # Append secondary and coordinate
+                    final_img = Assembler.concatenate_images_v(
+                        secondary_img, coordinate_img
+                    )
+        else:
+            if secondary_img is None:
+                if coordinate_img is None:
+                    final_img = primary_img
+                else:
+                    # Append primary and coordinate
+                    final_img = Assembler.concatenate_images_v(
+                        primary_img, coordinate_img
+                    )
+            else:
+                # Append primary and secondary
+                final_img = Assembler.concatenate_images_v(primary_img, secondary_img)
+                if coordinate_img:
+                    # Append primary and secondary and coordinate
+                    final_img = Assembler.concatenate_images_v(
+                        final_img, coordinate_img
+                    )
+
+        final_img.save(out_path + "all-text.png")
+
+        # Add padding to text block image to match the style specifications: (block_inches * dpi)
+        final_width, final_height = final_img.size
+        padding_total = (
+            int(text_size_dict["block_inches"] * text_size_dict["dpi"]) - final_height
+        )
+
+        # Add padding to the text block image north and south image.
+        img_updown = ImageOps.expand(
+            final_img,
+            border=(0, int(padding_total / 2), 0, int(padding_total / 2)),
+            fill="white",
+        )
+        logging.debug(f"padding total: {padding_total}, final height: {final_height}")
+
+        # Add padding to south of image if there is left over space. (shouldnt be off by more than a pixel)
+        if padding_total % 2 != 0:
+            img_updown = ImageOps.expand(img_updown, border=(0, 0, 0, 1), fill="white")
+        logging.debug(f"final text block size: {img_updown.size}")
+        img_updown.save(out_path + "all-text-updown.png")
+        """
+        # Combine the blocks into one image
+        # Add the correct border to the image
+        # Append the text to the map image and save
+
+        # Calculate how big the size of the text should be. (input: text size proportions (rem / px) (multiplier of proportions))
+
+        logging.debug(f"add_text input image width: {map_width}, height: {map_height}")
+        img = Image.open(img_path).convert("RGBA")
+        draw = ImageDraw.Draw(img)
+
+        # Should be done before we add the border on the image.
+        # Check that we are getting an cropped image with the correct proportions.
+        # To Do? Maybe
+
+        # See how big we want the text 'block'
+        #
+
+        # block size = width * map_block_text_height
+        block_height = dict_block_text_height[frame_size]  # (inches) * mulitplier
+
+        # myFont = ImageFont.truetype("src/fonts/texgyreadventor-regular.otf", 1100)
         # draw.textsize(msg, font=myFont)
 
         # Center the text
@@ -241,7 +417,28 @@ class Assembler:
             ((width - w) / 2, (height - h) * 0.94), msg[0], fill="black", font=myFont
         )
 
+        primary_font_size = None
+        secondary_font_size = None
+        coordinate_font_size = None
+
+        # Get font path
+        try:
+            text_style = map_font_path[text["style"]]
+            primary_font = ImageFont.truetype(
+                map_font_path[text_style["primary_font"]], primary_font_size
+            )
+            secondary_font = ImageFont.truetype(
+                map_font_path[text_style["secondary_font"]], secondary_font_size
+            )
+            coordinate_font = ImageFont.truetype(
+                map_font_path[text_style["coordinate_font"]], coordinate_font_size
+            )
+        except Exception as e:
+            logging.error("Error getting font path: " + str(e))
+            raise ValueError("Error getting font path: " + str(e))
+
         myFont = ImageFont.truetype("src/fonts/texgyreadventor-regular.otf", 150)
+
         # Center the text
         w, h = draw.textsize(msg[1], font=myFont)
         draw.text(
@@ -249,3 +446,4 @@ class Assembler:
         )
 
         img.save(out_path)
+        """
