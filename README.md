@@ -12,6 +12,15 @@ pipenv check
 
 pytest
 
+# Run Test with Logs
+
+pytest --log-cli-level=INFO
+
+# Run Specific Test
+
+pytest test_mod.py::TestClass::test_method
+pytest test/assembler_test.py::TestAssembler::test_add_text_all_blocks
+
 # Run the application
 
 pipenv run python3 main.py test/inputs/sample_input_payload.json
