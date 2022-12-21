@@ -21,11 +21,12 @@ from regex import search
 from src.models.border_style import Border
 import numpy as np
 from src.style_constants import map_style_text, map_font_path
+import settings
 
 
 class Assembler:
     @staticmethod
-    def assemble_image(folder_path, tile_grid, output_img_name):
+    def assemble_image(folder_path, tile_grid, output_img_name, verbose=False):
         # Given a folder path, concatenate the map image from these tile images.
         # tile_grid [x, y] Number of tiles in grid
         logging.info("assembling images from " + folder_path)
@@ -61,6 +62,9 @@ class Assembler:
 
         # Save the final image
         composite.save("./" + output_img_name)
+        if verbose:
+            logging.info(f"saving assembled image to {settings.TEMP_OUTPUT_FOLDER}")
+            composite.save(settings.TEMP_OUTPUT_FOLDER + "assemble-tiles.png")
         logging.info("output image: " + output_img_name)
 
     @staticmethod
@@ -69,7 +73,7 @@ class Assembler:
         print("TO DO: check image folder existance")
 
     @staticmethod
-    def crop_image(map_box, img_path, output_path, zoom):
+    def crop_image(map_box, img_path, output_path, zoom, verbose=False):
         logging.info(
             "cropping the image to the correct size. Input: "
             + img_path
@@ -119,10 +123,20 @@ class Assembler:
         im1 = img.crop(crop_payload)
 
         logging.info("Save cropped image to " + output_path)
+        if verbose:
+            logging.info(f"saving cropped image to {settings.TEMP_OUTPUT_FOLDER}")
+            im1.save(settings.TEMP_OUTPUT_FOLDER + "crop-to-bbox.png")
         im1.save(output_path)
 
     @staticmethod
-    def add_pin(context, input_path: str, output_path: str, pin: Pin) -> None:
+    def add_pin(
+        context,
+        input_path: str,
+        output_path: str,
+        pin: Pin,
+        verbose: bool = False,
+        id: int = 99,
+    ) -> None:
         # Input map path and pin DTO
         # Save map to output location with pin on map
         logging.info(context)
@@ -160,12 +174,20 @@ class Assembler:
         map_img.paste(
             pin_img, (print_pin_location_x, print_pin_location_y), mask=pin_img
         )
-        map_img.save("withPin.png")
+        if verbose:
+            logging.info(f"saving map with pin to {settings.TEMP_PIN_OUTPUT_FOLDER}")
+            map_img.save(
+                settings.TEMP_PIN_OUTPUT_FOLDER + "add-pin-" + str(id) + ".png"
+            )
+
         # Save map with pin saved as " + output_path)
         map_img.save(output_path)
 
     @staticmethod
-    def add_pins_to_map(context, input_path: str, output_path: str) -> None:
+    def add_pins_to_map(
+        context, input_path: str, output_path: str, verbose: bool = False
+    ) -> None:
+        id = 0
         for p in context["pins"]:
             curr_pin = Pin(
                 icon=p["icon"],
@@ -176,15 +198,23 @@ class Assembler:
             )
             logging.info("adding pin: " + str(curr_pin))
             Assembler.add_pin(
-                context, input_path=input_path, output_path=output_path, pin=curr_pin
+                context,
+                input_path=input_path,
+                output_path=output_path,
+                pin=curr_pin,
+                verbose=verbose,
+                id=id,
             )
+            id += 1
 
     @staticmethod
     def isHexColor(color: str) -> bool:
         return search(r"^#(?:[0-9a-fA-F]{3}){1,2}$", color)
 
     @staticmethod
-    def add_border(map_style: dict, input_path: str, output_path: str):
+    def add_border(
+        map_style: dict, input_path: str, output_path: str, verbose: bool = False
+    ):
         # If Input path and output path are the same the image will be overwritten
         # border width dimensions in pixels
         # fill is color value defined
@@ -201,10 +231,13 @@ class Assembler:
             # else:
             # print("hex code doesn't exist" +  str(border.width) + str(border.color))
 
+        if verbose:
+            logging.info(f"saving map with border to {settings.TEMP_OUTPUT_FOLDER}")
+            img.save(settings.TEMP_OUTPUT_FOLDER + "add-border.png")
         img.save(output_path)
 
     @staticmethod
-    def add_transparency(img_path: str, img_output_path: str):
+    def add_transparency(img_path: str, img_output_path: str, verbose: bool = False):
         # Transform picture to RGBA
         # calculate range of pixels to loop through and change transparency
         # calculatre the step of each pixel change
@@ -218,6 +251,11 @@ class Assembler:
             np.arange(n), [0, 0.75 * n, 0.95 * n, n], [255, 255, 0, 0]
         )[:, np.newaxis]
         img = Image.fromarray(arr, mode="RGBA")
+        if verbose:
+            logging.info(
+                f"saving map with transparency to {settings.TEMP_PIN_OUTPUT_FOLDER}"
+            )
+            img.save(settings.TEMP_OUTPUT_FOLDER + "add-transparency.png")
         img.save(img_output_path)
 
     @staticmethod
@@ -254,7 +292,14 @@ class Assembler:
             return dst
 
     @staticmethod
-    def add_text(img_path: str, out_path: str, text: dict, frame_size: str, style: str):
+    def add_text(
+        img_path: str,
+        out_path: str,
+        text: dict,
+        frame_size: str,
+        style: str,
+        verbose: bool = False,
+    ):
         # TO DO: change this function to take in multiple messages and error check
         # Constants for positioning based off of how many messages in dict.
         # img_path: path to image to add text to
@@ -300,7 +345,12 @@ class Assembler:
                 primary_font,
                 "black",
             )
-            primary_img.save("temp_output/primary-text.png")
+            if verbose:
+                logging.info(
+                    f"saving primary text block to {settings.TEMP_TEXT_OUTPUT_FOLDER}"
+                )
+                primary_img.save(settings.TEMP_TEXT_OUTPUT_FOLDER + "primary-text.png")
+
         if text["secondary"] and text["secondary"] != "":
             logging.debug(f'secondary text found: {text["secondary"]}')
             secondary_font = ImageFont.truetype(
@@ -314,7 +364,14 @@ class Assembler:
                 secondary_font,
                 "black",
             )
-            secondary_img.save("temp_output/secondary-text.png")
+            if verbose:
+                logging.info(
+                    f"saving secondary text block to {settings.TEMP_TEXT_OUTPUT_FOLDER}"
+                )
+                secondary_img.save(
+                    settings.TEMP_TEXT_OUTPUT_FOLDER + "secondary-text.png"
+                )
+
         if text["coordinate"] and text["coordinate"] != "":
             logging.debug(f'coordinate text found: {text["coordinate"]}')
             coordinate_font = ImageFont.truetype(
@@ -328,7 +385,13 @@ class Assembler:
                 coordinate_font,
                 "black",
             )
-            coordinate_img.save("temp_output/coordinate-text.png")
+            if verbose:
+                logging.info(
+                    f"saving coordinate text block to {settings.TEMP_TEXT_OUTPUT_FOLDER}"
+                )
+                coordinate_img.save(
+                    settings.TEMP_TEXT_OUTPUT_FOLDER + "coordinate-text.png"
+                )
 
         if primary_img is None and secondary_img is None and coordinate_img is None:
             logging.debug(
@@ -366,7 +429,11 @@ class Assembler:
                         final_img, coordinate_img
                     )
 
-        final_img.save(out_path + "all-text.png")
+        if verbose:
+            logging.info(
+                f"saving final text block to {settings.TEMP_TEXT_OUTPUT_FOLDER}"
+            )
+            final_img.save(settings.TEMP_TEXT_OUTPUT_FOLDER + "all-text.png")
 
         # Add padding to text block image to match the style specifications: (block_inches * dpi)
         final_width, final_height = final_img.size
@@ -386,64 +453,11 @@ class Assembler:
         if padding_total % 2 != 0:
             img_updown = ImageOps.expand(img_updown, border=(0, 0, 0, 1), fill="white")
         logging.debug(f"final text block size: {img_updown.size}")
-        img_updown.save(out_path + "all-text-updown.png")
-        """
-        # Combine the blocks into one image
-        # Add the correct border to the image
-        # Append the text to the map image and save
 
-        # Calculate how big the size of the text should be. (input: text size proportions (rem / px) (multiplier of proportions))
-
-        logging.debug(f"add_text input image width: {map_width}, height: {map_height}")
-        img = Image.open(img_path).convert("RGBA")
-        draw = ImageDraw.Draw(img)
-
-        # Should be done before we add the border on the image.
-        # Check that we are getting an cropped image with the correct proportions.
-        # To Do? Maybe
-
-        # See how big we want the text 'block'
-        #
-
-        # block size = width * map_block_text_height
-        block_height = dict_block_text_height[frame_size]  # (inches) * mulitplier
-
-        # myFont = ImageFont.truetype("src/fonts/texgyreadventor-regular.otf", 1100)
-        # draw.textsize(msg, font=myFont)
-
-        # Center the text
-        w, h = draw.textsize(msg[0], font=myFont)
-        draw.text(
-            ((width - w) / 2, (height - h) * 0.94), msg[0], fill="black", font=myFont
-        )
-
-        primary_font_size = None
-        secondary_font_size = None
-        coordinate_font_size = None
-
-        # Get font path
-        try:
-            text_style = map_font_path[text["style"]]
-            primary_font = ImageFont.truetype(
-                map_font_path[text_style["primary_font"]], primary_font_size
+        if verbose:
+            logging.info(
+                f"saving final text block with padding to {settings.TEMP_TEXT_OUTPUT_FOLDER}"
             )
-            secondary_font = ImageFont.truetype(
-                map_font_path[text_style["secondary_font"]], secondary_font_size
-            )
-            coordinate_font = ImageFont.truetype(
-                map_font_path[text_style["coordinate_font"]], coordinate_font_size
-            )
-        except Exception as e:
-            logging.error("Error getting font path: " + str(e))
-            raise ValueError("Error getting font path: " + str(e))
+            img_updown.save(settings.TEMP_TEXT_OUTPUT_FOLDER + "add-text-w-padding.png")
 
-        myFont = ImageFont.truetype("src/fonts/texgyreadventor-regular.otf", 150)
-
-        # Center the text
-        w, h = draw.textsize(msg[1], font=myFont)
-        draw.text(
-            ((width - w) / 2, (height - h) * 0.97), msg[1], fill="black", font=myFont
-        )
-
-        img.save(out_path)
-        """
+        img_updown.save(out_path)

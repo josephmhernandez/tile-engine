@@ -7,6 +7,7 @@ from src.style_constants import map_style_text
 from src.engine.assembler import Assembler
 from src.models.print_format import PrintFormat
 from src.engine.validator import validate_json_attributes
+import settings
 
 # Note: Test Classes must start with "Test"
 # Note: Test Functions must start with "test"
@@ -81,7 +82,7 @@ class TestAssembler:
         logging.info(f"size of the image: {map_img.size}")
 
         img_path = assembled_cropped_image
-        out_path = "temp_output/"
+        out_path = "test.png"
         text = {
             "primary": "Washington, DC",
             "secondary": "United States",
@@ -95,18 +96,21 @@ class TestAssembler:
             text=text,
             frame_size=frame_size,
             style=style,
+            verbose=True,
         )
 
-        prim_img = Image.open("temp_output/primary-text.png")
-        sec_img = Image.open("temp_output/secondary-text.png")
-        coord_img = Image.open("temp_output/coordinate-text.png")
-        final_img = Image.open("temp_output/all-text.png")
-        all_text_w_padding = Image.open("temp_output/all-text-updown.png")
+        prim_img = Image.open(settings.TEMP_TEXT_OUTPUT_FOLDER + "primary-text.png")
+        sec_img = Image.open(settings.TEMP_TEXT_OUTPUT_FOLDER + "secondary-text.png")
+        coord_img = Image.open(settings.TEMP_TEXT_OUTPUT_FOLDER + "coordinate-text.png")
+        pre_padding_img = Image.open(settings.TEMP_TEXT_OUTPUT_FOLDER + "all-text.png")
+        all_text_w_padding = Image.open(
+            settings.TEMP_TEXT_OUTPUT_FOLDER + "add-text-w-padding.png"
+        )
 
         logging.info(f"size of the primary image: {prim_img.size}")
         logging.info(f"size of the secondary image: {sec_img.size}")
         logging.info(f"size of the coordinate image: {coord_img.size}")
-        logging.info(f"size of the final image: {final_img.size}")
+        logging.info(f"size of the final image: {pre_padding_img.size}")
         logging.info(f"size of the final image w padding: {all_text_w_padding.size}")
 
         # Assert that each image generated is the correct size
