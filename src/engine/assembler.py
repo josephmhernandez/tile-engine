@@ -20,7 +20,7 @@ import numpy as np
 from regex import search
 from src.models.border_style import Border
 import numpy as np
-from src.style_constants import map_style_text, map_font_path
+from src.style_constants import map_style, map_font_path
 import settings
 
 
@@ -330,7 +330,7 @@ class Assembler:
         secondary_img = None
         coordinate_img = None
 
-        style_dict = map_style_text[style]
+        style_dict = map_style[style]
         text_size_dict = style_dict[frame_size]
         if text["primary"] and text["primary"] != "":
             logging.debug(f'primary text found: {text["primary"]}')

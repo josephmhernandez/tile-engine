@@ -1,5 +1,9 @@
-map_style_text = {
+map_style = {
     "basic": {
+        "borders": [
+            {"width": 0, "color": "#FFFFFF"},
+        ],
+        "api": "https://api.maptiler.com/maps/voyager/{z}/{x}/{y}@2x.png?key=PmIF6Ez34ROeDo7jJGuD#",
         "primary_font": "Semplicita-Modern-Medium",
         "secondary_font": "Semplicita-Modern-Medium",
         "coordinate_font": "Semplicita-Modern-Medium",

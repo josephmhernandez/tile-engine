@@ -3,7 +3,7 @@ import pytest
 from PIL import Image
 import os
 import glob
-from src.style_constants import map_style_text
+from src.style_constants import map_style
 from src.engine.assembler import Assembler
 from src.models.print_format import PrintFormat
 from src.engine.validator import validate_json_attributes
@@ -114,20 +114,15 @@ class TestAssembler:
         logging.info(f"size of the final image w padding: {all_text_w_padding.size}")
 
         # Assert that each image generated is the correct size
+        assert map_style[style][frame_size]["primary_text_block"] == prim_img.size[1]
+        assert map_style[style][frame_size]["secondary_text_block"] == sec_img.size[1]
         assert (
-            map_style_text[style][frame_size]["primary_text_block"] == prim_img.size[1]
-        )
-        assert (
-            map_style_text[style][frame_size]["secondary_text_block"] == sec_img.size[1]
-        )
-        assert (
-            map_style_text[style][frame_size]["coordinate_text_block"]
-            == coord_img.size[1]
+            map_style[style][frame_size]["coordinate_text_block"] == coord_img.size[1]
         )
 
         assert (
-            map_style_text[style][frame_size]["block_inches"]
-            * map_style_text[style][frame_size]["dpi"]
+            map_style[style][frame_size]["block_inches"]
+            * map_style[style][frame_size]["dpi"]
             == all_text_w_padding.size[1]
         )
 

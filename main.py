@@ -167,19 +167,18 @@ def main(args, verbose=False) -> int:
     # Set up logger
     logging.basicConfig(
         format="%(asctime)s %(levelname)-8s %(message)s",
-        filename=settings.LOG_FILENAME,
+        # TO DO: make this a command line argument
+        # filename=settings.LOG_FILENAME,
         level=logging.INFO,
         datefmt="%Y-%m-%d %H:%M:%S",
     )
-
     # Validate payload
     logging.info("Validating payload...")
     context = validate_payload(args)
-
     # Run tile engine
     logging.info("Running tile engine...")
-    logging.info("tile-engine context: " + str(context))
-
+    logging.info(f"tile-engine context: {str(context)} ")
+    return ""
     engine_code = run_tile_engine(context, verbose=verbose)
     return engine_code
 
@@ -197,6 +196,7 @@ if __name__ == "__main__":
             logs_location
 
     """
+    print("starting...")
     try:
         code = main(sys.argv, verbose=True)
         logging.info("finished with Engine result code " + str(code))

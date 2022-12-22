@@ -5,20 +5,30 @@ from src.models.map_style import get_map_style_specifications
 from src.models.pin import Pin
 from typing import List
 import logging
-
+import json
 from src.models.print_format import PrintFormat
 
 
 class ValueValidator:
     @staticmethod
-    def extract_valid_bbox_value(bbox_values: list) -> Bbox:
+    def extract_valid_bbox_value(bbox_values: str) -> Bbox:
         try:
             # TO DO:
             # Validate Bbox values
 
-            # Return Bbox value
-            tl = Coord(bbox_values[0], bbox_values[1])
-            br = Coord(bbox_values[2], bbox_values[3])
+            bbox_dict = json.loads(bbox_values)
+            logging.debug(f"bbox_dict: {bbox_dict}")
+            tl = Coord(
+                lon=bbox_dict["_southWest"]["lng"], lat=bbox_dict["_northEast"]["lat"]
+            )
+            br = Coord(
+                lon=bbox_dict["_northEast"]["lng"], lat=bbox_dict["_southWest"]["lat"]
+            )
+
+            # # Return Bbox value
+            # Keep this for reference now
+            # tl = Coord(bbox_values[0], bbox_values[1])
+            # br = Coord(bbox_values[2], bbox_values[3])
             context_bbox = Bbox(tl, br)
             return context_bbox
         except:
@@ -55,8 +65,19 @@ class ValueValidator:
         # file path, color, coordinate points (lon, lat)
 
         logging.info("Validating pin(s)")
+        rtnPins = []
+        for pin in pins:
+            t = {}
+            t["id"] = pin["id"]
+            t["icon"] = pin["style"]
+            t["location"] = [pin["position"]["lng"], pin["position"]["lat"]]
+            t["digital_width"] = pin["size"]
+            t["digital_height"] = pin["size"]
+            # TO DO: UI add color to commercejs (UI)
+            t["color"] = "#000000"
+            rtnPins.append(t)
 
-        return pins
+        return rtnPins
 
     @staticmethod
     def extract_valid_zoom_value(zoom: int) -> int:
@@ -65,6 +86,19 @@ class ValueValidator:
             raise ValueError("zoom is outside range : ")
 
         return zoom
+
+    @staticmethod
+    def extract_valid_text_flag(input_payload: dict) -> bool:
+
+        if (
+            input_payload["textPrimary"] != ""
+            or input_payload["textSecondary"] != ""
+            or input_payload["textCoordinates"] != ""
+        ):
+            logging.info("Text found in input payload")
+            return True
+        logging.info("No text found in input payload")
+        return False
 
     # @staticmethod
     # def validate_input_values(input_payload) -> bool:
