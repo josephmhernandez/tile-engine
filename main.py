@@ -36,6 +36,9 @@ from src.models.border_style import Border
 import logging
 from json import load
 from schema import Schema, And, Use, Optional, SchemaError
+import settings
+import src.engine.engine_utils as engine_utils
+import PIL.Image
 
 
 def run_tile_engine(context, verbose=False) -> int:
@@ -45,7 +48,12 @@ def run_tile_engine(context, verbose=False) -> int:
     context = {}
     verbose = False
     """
+    logging.info("cleaing temp folder...")
 
+    engine_utils.create_empty_folder(settings.TEMP_OUTPUT_FOLDER)
+    engine_utils.create_empty_folder(settings.TEMP_TEXT_OUTPUT_FOLDER)
+    engine_utils.create_empty_folder(settings.TEMP_PIN_OUTPUT_FOLDER)
+    engine_utils.create_empty_folder(settings.TEMP_TILE_IMAGE_FOLDER)
     # Run Downloader
     try:
         logging.info("Running Downloader...")
@@ -162,6 +170,11 @@ def run_tile_engine(context, verbose=False) -> int:
     return engine_status_codes.ENGINE_SUCCESS
 
 
+def adjust_pil_settings():
+    # Increase PIL image size limit
+    PIL.Image.MAX_IMAGE_PIXELS = 178956969
+
+
 def main(args, verbose=False) -> int:
     # Return engine tile code.
     # Set up logger
@@ -177,8 +190,8 @@ def main(args, verbose=False) -> int:
     context = validate_payload(args)
     # Run tile engine
     logging.info("Running tile engine...")
-    logging.info(f"tile-engine context: {str(context)} ")
-    return ""
+    logging.debug(f"tile-engine context: {str(context)} ")
+    adjust_pil_settings()
     engine_code = run_tile_engine(context, verbose=verbose)
     return engine_code
 

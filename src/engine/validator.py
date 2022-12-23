@@ -82,15 +82,15 @@ def validate_json_attributes(input_payload):
         # TO DO: add map_dimesnion to payload from commercejs (UI)
         if "map_dimension" not in input_payload:
             logging.info(f"map_dimension not in input_payload")
-            context[
-                "map_dimension"
-            ] = ValueValidator.extract_valid_print_dimension_value("_24_36")
+            context["map_dimension"] = "_24_36"
+            context["poster_dimension"] = "_24_36"
         else:
             context[
                 "map_dimension"
             ] = ValueValidator.extract_valid_print_dimension_value(
                 input_payload["print_dimension"]
             )
+            context["poster_dimesnion"] = "_24_36"
 
         # Optional Elements
         if "pins" in input_payload:

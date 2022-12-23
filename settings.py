@@ -19,6 +19,6 @@ ASSEMBLER_TEST_FOLDER = "test/assembler_unit_test_attachments/"
 
 # xxxxxx for unit testing -> delete folder after each unit test
 # temp_output is used to store output at each engine step if flag is set.
-TEMP_OUTPUT_FOLDER = "temp_output/"
+TEMP_OUTPUT_FOLDER = "src/temp_output/"
 TEMP_TEXT_OUTPUT_FOLDER = TEMP_OUTPUT_FOLDER + "temp_text/"
 TEMP_PIN_OUTPUT_FOLDER = TEMP_OUTPUT_FOLDER + "temp_pin/"

@@ -26,7 +26,7 @@ class TestAssembler:
 
         # Remove all files from /temp_output folder
         print("temp_output delete")
-        files = glob.glob("/temp_output/*.png")
+        files = glob.glob(f"{settings.TEMP_OUTPUT_FOLDER}*.png")
         for f in files:
             os.remove(f)
         pass

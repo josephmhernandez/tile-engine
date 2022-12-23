@@ -4,6 +4,8 @@ from src.models.icon import Icon
 from src.models.pin import Pin
 from src.models.print_format import PrintFormat
 import logging
+import os
+import glob
 
 
 def get_leaflet_digital_pixel_size(pf: PrintFormat) -> tuple:
@@ -100,3 +102,18 @@ def get_pin_location(map_box: Bbox, pin: Pin, print_format: PrintFormat) -> tupl
     )
 
     return (adj_x_pixels, adj_y_pixels)
+
+
+def create_empty_folder(path: str) -> None:
+    # Create an empty folder at the path
+    # Remove any existing files in the path
+    if os.path.isdir(path):
+        logging.info("folder already exists")
+        logging.info("cleaning folder")
+        files = glob.glob(f"{path}*.png")
+        for file in files:
+            logging.info("removing file: " + file)
+            os.remove(file)
+    else:
+        logging.info("create temp folder: " + path)
+        os.mkdir(path)
