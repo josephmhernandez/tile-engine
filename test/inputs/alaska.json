@@ -1,0 +1,73 @@
+[
+  {
+    "pinList": [],
+    "center": [64.2008413, -149.4936733],
+    "zoom": 4,
+    "orientation": "portrait",
+    "textPrimary": "",
+    "textSecondary": "",
+    "textCoordinates": "",
+    "styling": "basic",
+    "size": "_24_36",
+    "tileLayer": "white-transit",
+    "bbox": "{\"_southWest\":{\"lat\":43.96119063892027,\"lng\":-172.705078125},\"_northEast\":{\"lat\":75.90950400691688,\"lng\":-126.21093750000001}}",
+    "quantity": 1,
+    "description": "TO DO: Center of Map",
+    "id": "39264946-05f0-4406-bf32-635c2d88dbfb",
+    "name": "Personalized Map",
+    "unitPrice": 59,
+    "lineItemId": [
+      {
+        "id": "item_7RyWOwmK5nEa2V",
+        "product_id": "prod_VKXmwDy717orgD",
+        "name": "Personalized Map",
+        "product_name": "Personalized Map",
+        "sku": null,
+        "permalink": "qNG91W",
+        "quantity": 2,
+        "price": {
+          "raw": 59,
+          "formatted": "59.00",
+          "formatted_with_symbol": "$59.00",
+          "formatted_with_code": "59.00 USD"
+        },
+        "line_total": {
+          "raw": 118,
+          "formatted": "118.00",
+          "formatted_with_symbol": "$118.00",
+          "formatted_with_code": "118.00 USD"
+        },
+        "is_valid": true,
+        "product_meta": [],
+        "selected_options": [],
+        "variant": null,
+        "image": {
+          "id": "ast_G6kVw7jObjl2eD",
+          "url": "https://cdn.chec.io/merchants/47490/assets/uKBj1KNtsJiynM4o|logo-royal-purple-transparent.png",
+          "description": null,
+          "is_image": true,
+          "filename": "logo-royal-purple-transparent.png",
+          "file_size": 84795,
+          "file_extension": "png",
+          "image_dimensions": { "width": 1920, "height": 1080 },
+          "meta": [],
+          "created_at": 1665411767,
+          "updated_at": 1665411770
+        },
+        "tax": null
+      }
+    ],
+    "styling_specs": {
+      "block_inches": 4.5,
+      "primary_font_size": 32,
+      "primary_font": "Semplicita",
+      "primary_font_color": "#000000",
+      "secondary_font_size": 16,
+      "secondary_font": "Semplicita",
+      "secondary_font_color": "#000000",
+      "coordinate_font_size": 12,
+      "coordinate_font": "Semplicita",
+      "coordinate_font_color": "#000000"
+    }
+  }
+]
