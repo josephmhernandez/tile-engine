@@ -1,19 +1,27 @@
 [
   {
-    "pinList": [],
-    "center": [64.2008413, -149.4936733],
-    "zoom": 4,
+    "pinList": [
+      {
+        "id": "98fd75b0-937b-4f05-8361-d3c8af72b419",
+        "size": 40,
+        "style": "heart-black-white",
+        "position": { "lat": 47.67093637154817, "lng": -122.43438834026445 }
+      }
+    ],
+    "center": [47.6062095, -122.3320708],
+    "zoom": 11,
     "orientation": "portrait",
-    "textPrimary": "",
-    "textSecondary": "",
+    "textPrimary": "Seattle",
+    "textSecondary": "WA, USA",
     "textCoordinates": "",
     "styling": "basic",
     "size": "_24_36",
     "tileLayer": "white-transit",
-    "bbox": "{\"_southWest\":{\"lat\":43.96119063892027,\"lng\":-172.705078125},\"_northEast\":{\"lat\":75.90950400691688,\"lng\":-126.21093750000001}}",
+    "bbox": "{\"_southWest\":{\"lat\":47.441092383072515,\"lng\":-122.5133514404297},\"_northEast\":{\"lat\":47.77117590426355,\"lng\":-122.15011596679689}}",
+    "tileZoomOffset": "2",
     "quantity": 1,
-    "description": "TO DO: Center of Map",
-    "id": "39264946-05f0-4406-bf32-635c2d88dbfb",
+    "description": "Map of Seattle",
+    "id": "9b665099-4a45-48b7-b9ad-cbc22a70aa98",
     "name": "Personalized Map",
     "unitPrice": 59,
     "lineItemId": [
@@ -24,7 +32,7 @@
         "product_name": "Personalized Map",
         "sku": null,
         "permalink": "qNG91W",
-        "quantity": 2,
+        "quantity": 1,
         "price": {
           "raw": 59,
           "formatted": "59.00",
@@ -32,10 +40,10 @@
           "formatted_with_code": "59.00 USD"
         },
         "line_total": {
-          "raw": 118,
-          "formatted": "118.00",
-          "formatted_with_symbol": "$118.00",
-          "formatted_with_code": "118.00 USD"
+          "raw": 59,
+          "formatted": "59.00",
+          "formatted_with_symbol": "$59.00",
+          "formatted_with_code": "59.00 USD"
         },
         "is_valid": true,
         "product_meta": [],
@@ -68,6 +76,11 @@
       "coordinate_font_size": 12,
       "coordinate_font": "Semplicita",
       "coordinate_font_color": "#000000"
+    },
+    "mapDimensionsIn": {
+      "map_width": 23,
+      "map_height": 31,
+      "map_pixel_multiplier": 23
     }
   }
 ]

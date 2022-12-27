@@ -31,7 +31,7 @@ class Downloader:
         r = requests.get(url, stream=True)
 
         if r.status_code != 200:
-            logging.error("")
+            logging.error(f"Could not download tile: {url}")
 
         # Next we will write the raw content to an image
         with open(file_name, "wb") as f:
@@ -47,11 +47,16 @@ class Downloader:
 
         logging.info("url for downloading " + base_url)
 
+        # Top Left and Bottom Right tile.
         tl_tiles = mercantile.tile(
-            float(map_bbox.top_left.lon), float(map_bbox.top_left.lat), zoom
+            float(map_bbox.top_left.lon),
+            float(map_bbox.top_left.lat),
+            zoom,
         )
         br_tiles = mercantile.tile(
-            float(map_bbox.bottom_right.lon), float(map_bbox.bottom_right.lat), zoom
+            float(map_bbox.bottom_right.lon),
+            float(map_bbox.bottom_right.lat),
+            zoom,
         )
 
         x_tile_range = [tl_tiles.x, br_tiles.x]
@@ -72,7 +77,7 @@ class Downloader:
                     Downloader.download_tile,
                     (x, y, zoom, base_url, file_name),
                 )
-                logging.info("downloaded tile...")
+                # logging.info("downloaded tile...")
                 count += 1
 
         # Close Multi processing

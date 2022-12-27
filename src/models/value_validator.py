@@ -63,21 +63,22 @@ class ValueValidator:
         #   - attach a hex color to each map style
         #   - attach location of each pin file path
         # file path, color, coordinate points (lon, lat)
+        pass
+        # trying to delete this
+        # logging.info("Validating pin(s)")
+        # rtnPins = []
+        # for pin in pins:
+        #     t = {}
+        #     t["id"] = pin["id"]
+        #     t["icon"] = pin["style"]
+        #     t["location"] = [pin["position"]["lng"], pin["position"]["lat"]]
+        #     t["digital_width"] = pin["size"]
+        #     t["digital_height"] = pin["size"]
+        #     # TO DO: UI add color to commercejs (UI)
+        #     t["color"] = "#000000"
+        #     rtnPins.append(t)
 
-        logging.info("Validating pin(s)")
-        rtnPins = []
-        for pin in pins:
-            t = {}
-            t["id"] = pin["id"]
-            t["icon"] = pin["style"]
-            t["location"] = [pin["position"]["lng"], pin["position"]["lat"]]
-            t["digital_width"] = pin["size"]
-            t["digital_height"] = pin["size"]
-            # TO DO: UI add color to commercejs (UI)
-            t["color"] = "#000000"
-            rtnPins.append(t)
-
-        return rtnPins
+        # return rtnPins
 
     @staticmethod
     def extract_valid_zoom_value(zoom: int) -> int:

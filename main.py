@@ -34,7 +34,7 @@ from src.models.print_format import PrintFormat
 from src.models.border_style import Border
 
 import logging
-from json import load
+import json
 from schema import Schema, And, Use, Optional, SchemaError
 import settings
 import src.engine.engine_utils as engine_utils
@@ -98,7 +98,7 @@ def run_tile_engine(context, verbose=False) -> int:
     logging.info("Add pins to map " + settings.IMAGE_FILE_NAME)
     try:
         if context["pins"] != None:
-            logging.info("Adding " + str(len(context["pins"])) + " pins to map image")
+            logging.info(f"Adding {str(len(context['pins']))} pins to map image")
             Assembler.add_pins_to_map(
                 context,
                 input_path=settings.IMAGE_FILE_NAME,
@@ -185,12 +185,14 @@ def main(args, verbose=False) -> int:
         level=logging.INFO,
         datefmt="%Y-%m-%d %H:%M:%S",
     )
+
     # Validate payload
     logging.info("Validating payload...")
     context = validate_payload(args)
+
     # Run tile engine
     logging.info("Running tile engine...")
-    logging.debug(f"tile-engine context: {str(context)} ")
+    logging.info(f"tile-engine context: {str(context)} ")
     adjust_pil_settings()
     engine_code = run_tile_engine(context, verbose=verbose)
     return engine_code

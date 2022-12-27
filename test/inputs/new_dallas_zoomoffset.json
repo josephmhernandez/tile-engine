@@ -1,19 +1,19 @@
 [
   {
     "pinList": [],
-    "center": [20.90500743564223, -157.82409667968753],
-    "zoom": 7,
-    "orientation": "landscape",
-    "textPrimary": "",
-    "textSecondary": "",
+    "center": [32.7766642, -96.79698789999999],
+    "zoom": 12,
+    "orientation": "portrait",
+    "textPrimary": "Dallas",
+    "textSecondary": "TX, USA",
     "textCoordinates": "",
     "styling": "basic",
     "size": "_24_36",
     "tileLayer": "white-transit",
-    "bbox": "{\"_southWest\":{\"lat\":18.166730410221938,\"lng\":-162.24609375000003},\"_northEast\":{\"lat\":23.594194326203834,\"lng\":-153.40209960937503}}",
+    "bbox": "{\"_southWest\":{\"lat\":32.36372329228304,\"lng\":-97.16033935546876},\"_northEast\":{\"lat\":33.1869846718891,\"lng\":-96.43386840820314}}",
     "quantity": 1,
-    "description": "TO DO: Center of Map",
-    "id": "9813cccb-e198-41f2-b629-29c923676331",
+    "description": "Map of Dallas",
+    "id": "ff49645e-d95a-448c-a53f-ac34c122a8c6",
     "name": "Personalized Map",
     "unitPrice": 59,
     "lineItemId": [
@@ -24,7 +24,7 @@
         "product_name": "Personalized Map",
         "sku": null,
         "permalink": "qNG91W",
-        "quantity": 1,
+        "quantity": 2,
         "price": {
           "raw": 59,
           "formatted": "59.00",
@@ -32,10 +32,10 @@
           "formatted_with_code": "59.00 USD"
         },
         "line_total": {
-          "raw": 59,
-          "formatted": "59.00",
-          "formatted_with_symbol": "$59.00",
-          "formatted_with_code": "59.00 USD"
+          "raw": 118,
+          "formatted": "118.00",
+          "formatted_with_symbol": "$118.00",
+          "formatted_with_code": "118.00 USD"
         },
         "is_valid": true,
         "product_meta": [],

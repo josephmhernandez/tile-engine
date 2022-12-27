@@ -1,19 +1,27 @@
 [
   {
-    "pinList": [],
-    "center": [32.7766642, -96.79698789999999],
+    "pinList": [
+      {
+        "id": "1f2ab391-8147-4f2d-b3b4-c334e7dd8f44",
+        "size": 40,
+        "style": "heart-black-white",
+        "position": { "lat": 47.6062095, "lng": -122.3320708 }
+      }
+    ],
+    "center": [47.6062095, -122.3320708],
     "zoom": 10,
     "orientation": "portrait",
-    "textPrimary": "Dallas, Texas",
-    "textSecondary": "United States",
-    "textCoordinates": "N 32°46'35.99\" W 96°47'49.16\"",
+    "textPrimary": "Seattle",
+    "textSecondary": "WA, USA",
+    "textCoordinates": "N 47°36'22.35\" W 122°19'55.45\"",
     "styling": "basic",
     "size": "_24_36",
     "tileLayer": "white-transit",
-    "bbox": "{\"_southWest\":{\"lat\":32.36372329228304,\"lng\":-97.16033935546876},\"_northEast\":{\"lat\":33.1869846718891,\"lng\":-96.43386840820314}}",
+    "bbox": "{\"_southWest\":{\"lat\":47.27550216573706,\"lng\":-122.69531250000001},\"_northEast\":{\"lat\":47.93566683402829,\"lng\":-121.96884155273439}}",
+    "tileZoomOffset": "2",
     "quantity": 1,
-    "description": "Map of Dallas, Texas",
-    "id": "0d93fc3e-8ab2-4805-9605-bf6dee712f9b",
+    "description": "Map of Seattle",
+    "id": "605b3287-423d-4d54-ae16-fa95542fa683",
     "name": "Personalized Map",
     "unitPrice": 59,
     "lineItemId": [
@@ -24,7 +32,7 @@
         "product_name": "Personalized Map",
         "sku": null,
         "permalink": "qNG91W",
-        "quantity": 2,
+        "quantity": 1,
         "price": {
           "raw": 59,
           "formatted": "59.00",
@@ -32,10 +40,10 @@
           "formatted_with_code": "59.00 USD"
         },
         "line_total": {
-          "raw": 118,
-          "formatted": "118.00",
-          "formatted_with_symbol": "$118.00",
-          "formatted_with_code": "118.00 USD"
+          "raw": 59,
+          "formatted": "59.00",
+          "formatted_with_symbol": "$59.00",
+          "formatted_with_code": "59.00 USD"
         },
         "is_valid": true,
         "product_meta": [],
@@ -68,6 +76,11 @@
       "coordinate_font_size": 12,
       "coordinate_font": "Semplicita",
       "coordinate_font_color": "#000000"
+    },
+    "mapDimensionsIn": {
+      "map_width": 23,
+      "map_height": 31,
+      "map_pixel_multiplier": 23
     }
   }
 ]

@@ -2,23 +2,26 @@
   {
     "pinList": [
       {
-        "id": "1b4b7954-1306-4654-8dfb-9d4d722552b9",
+        "id": "5cb52597-d968-4317-992b-c2fc43c30b6a",
         "size": 40,
-        "style": "heart-white-black",
-        "position": { "lat": 38.9220241395773, "lng": -76.95098876953126 }
+        "style": "diamond-black-white",
+        "position": { "lat": 45.68507729739813, "lng": -122.71865888839 }
       }
     ],
-    "center": [38.9071923, -77.0368707],
-    "zoom": 11,
-    "orientation": "landscape",
-    "textPrimary": "Washington D.C.",
-    "textSecondary": "DC, USA",
-    "textCoordinates": "N 38°55'19.29\" W 76°57'3.56\"",
-    "tileLayer": "black-transit",
-    "bbox": "{\"_southWest\":{\"lat\":38.74444410121548,\"lng\":-77.42202758789064},\"_northEast\":{\"lat\":39.069312937859614,\"lng\":-76.65298461914064}}",
+    "center": [45.515232, -122.6783853],
+    "zoom": 10,
+    "orientation": "portrait",
+    "textPrimary": "Portland",
+    "textSecondary": "OR, USA",
+    "textCoordinates": "",
+    "styling": "basic",
+    "size": "_24_36",
+    "tileLayer": "white-transit",
+    "bbox": "{\"_southWest\":{\"lat\":45.17138813517549,\"lng\":-123.04138183593751},\"_northEast\":{\"lat\":45.857499316676666,\"lng\":-122.31491088867189}}",
+    "tileZoomOffset": "2",
     "quantity": 1,
-    "description": "Map of Washington D.C.",
-    "id": "94305fdd-8698-476f-ab6a-4a5ef174e02b",
+    "description": "Map of Portland",
+    "id": "08140f95-188c-4bcd-a91a-37e1044495d1",
     "name": "Personalized Map",
     "unitPrice": 59,
     "lineItemId": [
@@ -61,6 +64,23 @@
         },
         "tax": null
       }
-    ]
+    ],
+    "styling_specs": {
+      "block_inches": 4.5,
+      "primary_font_size": 32,
+      "primary_font": "Semplicita",
+      "primary_font_color": "#000000",
+      "secondary_font_size": 16,
+      "secondary_font": "Semplicita",
+      "secondary_font_color": "#000000",
+      "coordinate_font_size": 12,
+      "coordinate_font": "Semplicita",
+      "coordinate_font_color": "#000000"
+    },
+    "mapDimensionsIn": {
+      "map_width": 23,
+      "map_height": 31,
+      "map_pixel_multiplier": 23
+    }
   }
 ]

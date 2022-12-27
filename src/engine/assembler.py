@@ -20,7 +20,7 @@ import numpy as np
 from regex import search
 from src.models.border_style import Border
 import numpy as np
-from src.style_constants import map_style, map_font_path
+from src.style_constants import map_style, map_font_path, map_pin_path
 import settings
 
 
@@ -135,38 +135,44 @@ class Assembler:
         output_path: str,
         pin: Pin,
         verbose: bool = False,
-        id: int = 99,
+        id: int = 69,
     ) -> None:
         # Input map path and pin DTO
         # Save map to output location with pin on map
-        logging.info(context)
+        logging.info(f"map context: {context}")
         # Open image
         map_img = Image.open(input_path)
 
         # Make sure map is expected size
-        map_dim = src.engine.engine_utils.get_print_pixel_size(context["map_dimension"])
-        map_img = map_img.resize(map_dim)
-
+        # map_dim = src.engine.engine_utils.get_print_pixel_size(context["map_dimension"])
+        # map_img = map_img.resize(map_dim)
+        map_dim = map_img.size
         logging.info("current map size: " + str(map_dim))
 
         # Open Pin image Pin utils
-        pin_img = Image.open(src.engine.engine_utils.get_pin_image_path(pin))
+        pin_img = Image.open(map_pin_path[pin.icon])
+        # pin_img = Image.open(src.engine.engine_utils.get_pin_image_path(pin))
 
         # Calculate location of pin on the map based on size of map image (pixels)
         (
             print_pin_location_x,
             print_pin_location_y,
         ) = src.engine.engine_utils.get_pin_location(
-            map_box=context["bbox"], pin=pin, print_format=context["map_dimension"]
+            context, pin, map_dim_pixel=map_dim
         )
+        # trying to delete this
+        #     map_box=context["bbox"],
+        #     pin=pin,
+        #     map_dim_pixel=map_dim,
+        #     print_format=context["size"],
+        # )
 
         logging.info("pin location on print x: " + str(print_pin_location_x))
         logging.info("pin location on print y: " + str(print_pin_location_y))
 
         # Resize pin image
-        new_pin_dim = src.engine.engine_utils.get_pin_size(
-            context["map_dimension"], pin
-        )
+        # hererjekrje;l
+        new_pin_dim = src.engine.engine_utils.get_pin_size(context, pin, map_dim)
         logging.info("pin pixel size on map " + str(new_pin_dim))
         pin_img = pin_img.resize(new_pin_dim)
 
@@ -189,12 +195,14 @@ class Assembler:
     ) -> None:
         id = 0
         for p in context["pins"]:
+            print("pin")
+            print(p)
             curr_pin = Pin(
-                icon=p["icon"],
-                location=p["location"],
-                digital_height=p["digital_height"],
-                digital_width=p["digital_width"],
-                color=p["color"],
+                icon=p["style"],
+                location=[p["position"]["lng"], p["position"]["lat"]],
+                digital_height=p["size"],
+                digital_width=p["size"],
+                color=p["color"] if "color" in p else "#000000",
             )
             logging.info("adding pin: " + str(curr_pin))
             Assembler.add_pin(

@@ -1,3 +1,6 @@
+# We want all the map_style components to come as an input now from our UI.
+# We don't want to have to store constants here so we dont have to update two places.
+
 map_style = {
     "basic": {
         "borders": [
@@ -23,6 +26,15 @@ map_style = {
 
 map_font_path = {
     "Semplicita-Modern-Medium": "src/fonts/Semplicita-Modern-Medium.otf",
+}
+
+map_pin_path = {
+    "heart-black-white": "src/images/pins/heart-pin-square-black-white.png",
+    "heart-white-black": "src/images/pins/heart-pin-square-white-black.png",
+    "circle-white-black": "src/images/pins/circle-pin-square-white-black.png",
+    "circle-black-white": "src/images/pins/circle-pin-square-black-white.png",
+    "diamond-white-black": "src/images/pins/diamond-pin-square-white-black.png",
+    "diamond-black-white": "src/images/pins/diamond-pin-square-black-white.png",
 }
 
 # 300 pixels per inch
