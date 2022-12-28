@@ -1,0 +1,87 @@
+[
+  {
+    "pinList": [
+      {
+        "id": "5cda4087-4d0f-493d-b25a-004a228bfdae",
+        "size": 90,
+        "style": "circle-black-white",
+        "position": { "lat": 25.34402594073931, "lng": -97.3773152593403 }
+      }
+    ],
+    "center": [25.375050316443048, -97.74673358478017],
+    "zoom": 9,
+    "orientation": "portrait",
+    "textPrimary": "",
+    "textSecondary": "",
+    "textCoordinates": "N 25°20'38.49\" W 97°22'38.33\"",
+    "styling": "basic",
+    "size": "_24_36",
+    "tileLayer": "white-transit",
+    "bbox": "{\"_southWest\":{\"lat\":24.487148563173424,\"lng\":-98.47320556640626},\"_northEast\":{\"lat\":26.256472923285344,\"lng\":-97.020263671875}}",
+    "tileZoomOffset": "2",
+    "quantity": 1,
+    "description": "TO DO: Center of Map",
+    "id": "5aeb8172-349d-4be3-b3d0-1cec88fbc3b9",
+    "name": "Personalized Map",
+    "unitPrice": 59,
+    "lineItemId": [
+      {
+        "id": "item_7RyWOwmK5nEa2V",
+        "product_id": "prod_VKXmwDy717orgD",
+        "name": "Personalized Map",
+        "product_name": "Personalized Map",
+        "sku": null,
+        "permalink": "qNG91W",
+        "quantity": 1,
+        "price": {
+          "raw": 59,
+          "formatted": "59.00",
+          "formatted_with_symbol": "$59.00",
+          "formatted_with_code": "59.00 USD"
+        },
+        "line_total": {
+          "raw": 59,
+          "formatted": "59.00",
+          "formatted_with_symbol": "$59.00",
+          "formatted_with_code": "59.00 USD"
+        },
+        "is_valid": true,
+        "product_meta": [],
+        "selected_options": [],
+        "variant": null,
+        "image": {
+          "id": "ast_G6kVw7jObjl2eD",
+          "url": "https://cdn.chec.io/merchants/47490/assets/uKBj1KNtsJiynM4o|logo-royal-purple-transparent.png",
+          "description": null,
+          "is_image": true,
+          "filename": "logo-royal-purple-transparent.png",
+          "file_size": 84795,
+          "file_extension": "png",
+          "image_dimensions": { "width": 1920, "height": 1080 },
+          "meta": [],
+          "created_at": 1665411767,
+          "updated_at": 1665411770
+        },
+        "tax": null
+      }
+    ],
+    "styling_specs": {
+      "block_inches": 4.5,
+      "primary_font_size": 32,
+      "primary_font": "Semplicita",
+      "primary_font_color": "#000000",
+      "secondary_font_size": 16,
+      "secondary_font": "Semplicita",
+      "secondary_font_color": "#000000",
+      "coordinate_font_size": 12,
+      "coordinate_font": "Semplicita",
+      "coordinate_font_color": "#000000",
+      "borders": [{ "border_inches": 0.5, "color": "#FFFFFF" }]
+    },
+    "mapDimensionsIn": {
+      "map_width": 23,
+      "map_height": 31,
+      "map_pixel_multiplier": 23
+    }
+  }
+]
