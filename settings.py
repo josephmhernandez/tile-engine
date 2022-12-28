@@ -22,3 +22,9 @@ ASSEMBLER_TEST_FOLDER = "test/assembler_unit_test_attachments/"
 TEMP_OUTPUT_FOLDER = "src/temp_output/"
 TEMP_TEXT_OUTPUT_FOLDER = TEMP_OUTPUT_FOLDER + "temp_text/"
 TEMP_PIN_OUTPUT_FOLDER = TEMP_OUTPUT_FOLDER + "temp_pin/"
+
+TEMP_RESIZED_OUTPUT = TEMP_OUTPUT_FOLDER + "main-resized.png"
+
+# Controls the Editing of the Map / Poster. Need the map resized before we add
+#   text / borders / effects so these things are not distored.
+DPI = 300

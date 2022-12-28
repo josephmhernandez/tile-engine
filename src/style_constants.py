@@ -1,6 +1,6 @@
 # We want all the map_style components to come as an input now from our UI.
 # We don't want to have to store constants here so we dont have to update two places.
-
+# Trying to delete this.
 map_style = {
     "basic": {
         "borders": [
@@ -24,8 +24,10 @@ map_style = {
     }
 }
 
+
+# KEEP THIS BELOW
 map_font_path = {
-    "Semplicita-Modern-Medium": "src/fonts/Semplicita-Modern-Medium.otf",
+    "Semplicita": "src/fonts/Semplicita-Modern-Medium.otf",
 }
 
 map_pin_path = {

@@ -221,12 +221,15 @@ class Assembler:
 
     @staticmethod
     def add_border(
-        map_style: dict, input_path: str, output_path: str, verbose: bool = False
+        borders: list, input_path: str, output_path: str, verbose: bool = False
     ):
         # If Input path and output path are the same the image will be overwritten
         # border width dimensions in pixels
+
+        # Prepare border payload: width, color. width in pixels, color in hex code
+
         # fill is color value defined
-        borders = map_style["borders"]
+        # borders = map_style["borders"]
         if len(borders) == 0:
             logging.info("no borders to add to map")
             return
@@ -235,7 +238,13 @@ class Assembler:
 
         for border in borders:
             # if isinstance(border.width, int) and Assembler.isHexColor(border.color):
-            img = ImageOps.expand(img, border=border["width"], fill=border["color"])
+            pix_size = int(settings.DPI * border["border_inches"])
+            img = ImageOps.expand(
+                img,
+                # (e, n, w, s)
+                border=(pix_size, pix_size, pix_size, 0),
+                fill=border["color"],
+            )
             # else:
             # print("hex code doesn't exist" +  str(border.width) + str(border.color))
 
@@ -300,6 +309,13 @@ class Assembler:
             return dst
 
     @staticmethod
+    def calc_text_size(font_px: int, px_mult: int, dpi: int = settings.DPI) -> int:
+        """
+        Calculates the text size in inches based off of the font size in pixels
+        """
+        return int((font_px / px_mult) * dpi)
+
+    @staticmethod
     def add_text(
         img_path: str,
         out_path: str,
@@ -307,6 +323,7 @@ class Assembler:
         frame_size: str,
         style: str,
         verbose: bool = False,
+        context: dict = None,
     ):
         # TO DO: change this function to take in multiple messages and error check
         # Constants for positioning based off of how many messages in dict.
@@ -338,20 +355,36 @@ class Assembler:
         secondary_img = None
         coordinate_img = None
 
-        style_dict = map_style[style]
-        text_size_dict = style_dict[frame_size]
+        # trying to delete this.
+        # style_dict = map_style[style]
+        # text_size_dict = style_dict[frame_size]
+
+        style_dict = context["stylingSpecs"]
+
         if text["primary"] and text["primary"] != "":
             logging.debug(f'primary text found: {text["primary"]}')
+
+            prim_font_size = Assembler.calc_text_size(
+                font_px=style_dict["primary_font_size"],
+                px_mult=context["mapDimensionsIn"]["map_pixel_multiplier"],
+                dpi=settings.DPI,
+            )
             primary_font = ImageFont.truetype(
                 map_font_path[style_dict["primary_font"]],
-                text_size_dict["primary_font_size"],
+                prim_font_size,
+            )
+            prim_block_size = Assembler.calc_text_size(
+                font_px=int(style_dict["primary_font_size"] / 2)
+                + style_dict["primary_font_size"],
+                px_mult=context["mapDimensionsIn"]["map_pixel_multiplier"],
+                dpi=settings.DPI,
             )
             primary_img = Assembler.create_image(
-                (width, text_size_dict["primary_text_block"]),
+                (width, prim_block_size),
                 "white",
                 text["primary"],
                 primary_font,
-                "black",
+                style_dict["primary_font_color"],
             )
             if verbose:
                 logging.info(
@@ -361,16 +394,27 @@ class Assembler:
 
         if text["secondary"] and text["secondary"] != "":
             logging.debug(f'secondary text found: {text["secondary"]}')
+            sec_font_size = Assembler.calc_text_size(
+                font_px=style_dict["secondary_font_size"],
+                px_mult=context["mapDimensionsIn"]["map_pixel_multiplier"],
+                dpi=settings.DPI,
+            )
             secondary_font = ImageFont.truetype(
                 map_font_path[style_dict["secondary_font"]],
-                text_size_dict["secondary_font_size"],
+                sec_font_size,
+            )
+            sec_block_size = Assembler.calc_text_size(
+                font_px=int(style_dict["secondary_font_size"] / 2)
+                + style_dict["secondary_font_size"],
+                px_mult=context["mapDimensionsIn"]["map_pixel_multiplier"],
+                dpi=settings.DPI,
             )
             secondary_img = Assembler.create_image(
-                (width, text_size_dict["secondary_text_block"]),
+                (width, sec_block_size),
                 "white",
                 text["secondary"],
                 secondary_font,
-                "black",
+                style_dict["secondary_font_color"],
             )
             if verbose:
                 logging.info(
@@ -382,16 +426,27 @@ class Assembler:
 
         if text["coordinate"] and text["coordinate"] != "":
             logging.debug(f'coordinate text found: {text["coordinate"]}')
+            coord_font_size = Assembler.calc_text_size(
+                font_px=style_dict["coordinate_font_size"],
+                px_mult=context["mapDimensionsIn"]["map_pixel_multiplier"],
+                dpi=settings.DPI,
+            )
             coordinate_font = ImageFont.truetype(
                 map_font_path[style_dict["coordinate_font"]],
-                text_size_dict["coordinate_font_size"],
+                coord_font_size,
+            )
+            coord_block_size = Assembler.calc_text_size(
+                font_px=int(style_dict["coordinate_font_size"] / 2)
+                + style_dict["coordinate_font_size"],
+                px_mult=context["mapDimensionsIn"]["map_pixel_multiplier"],
+                dpi=settings.DPI,
             )
             coordinate_img = Assembler.create_image(
-                (width, text_size_dict["coordinate_text_block"]),
+                (width, coord_block_size),
                 "white",
                 text["coordinate"],
                 coordinate_font,
-                "black",
+                style_dict["coordinate_font_color"],
             )
             if verbose:
                 logging.info(
@@ -445,9 +500,7 @@ class Assembler:
 
         # Add padding to text block image to match the style specifications: (block_inches * dpi)
         final_width, final_height = final_img.size
-        padding_total = (
-            int(text_size_dict["block_inches"] * text_size_dict["dpi"]) - final_height
-        )
+        padding_total = int(style_dict["block_inches"] * settings.DPI) - final_height
 
         # Add padding to the text block image north and south image.
         img_updown = ImageOps.expand(
@@ -468,4 +521,6 @@ class Assembler:
             )
             img_updown.save(settings.TEMP_TEXT_OUTPUT_FOLDER + "add-text-w-padding.png")
 
-        img_updown.save(out_path)
+        # Add text block to map
+        map_w_text_img = Assembler.concatenate_images_v(map_img, img_updown)
+        map_w_text_img.save(out_path)

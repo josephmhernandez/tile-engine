@@ -112,6 +112,33 @@ def run_tile_engine(context, verbose=False) -> int:
         logging.critical(e, exc_info=True)
         return engine_status_codes.ASSEMBLER_ADD_PIN_FAILURE
 
+    logging.info(
+        f"Map is fully assembled need to resize to fit print format. Print format is controleld by dpi: {settings.DPI}"
+    )
+
+    # Resize the image to fit the print format.
+    # We need to resize according to the dpi for the rest of calculation for building the styling.
+    try:
+        logging.info("Resizing image to fit print format")
+        map_img = PIL.Image.open(settings.IMAGE_FILE_NAME)
+        resize_width = int(context["mapDimensionsIn"]["map_width"] * settings.DPI)
+        resize_height = int(context["mapDimensionsIn"]["map_height"] * settings.DPI)
+        size_map_img = map_img.size
+        logging.info(f"Image before resize: {size_map_img}")
+        logging.info(f"Resizing image to ({resize_width}, {resize_height})")
+        logging.info(
+            f"want to be close to zero..... resizing info loss: {float(size_map_img[0] / size_map_img[1]) - float(resize_width / resize_height)}"
+        )
+        map_img = map_img.resize((resize_width, resize_height))
+        map_img.save(settings.IMAGE_FILE_NAME)
+        if verbose:
+            map_img.save(settings.TEMP_RESIZED_OUTPUT)
+
+    except Exception as e:
+        logging.error("Assembler returned an error")
+        logging.critical(e, exc_info=True)
+        return engine_status_codes.MAIN_RESIZE_FAILURE
+
     # Dont remove. Will use this on other map styles in the future
     # Add map style
     # logging.info("adding style to the map " + str(context["map_style"]))
@@ -135,13 +162,22 @@ def run_tile_engine(context, verbose=False) -> int:
 
     # Add text to map
     logging.info("Adding text to the image")
+
     try:
-        if "text" in context["map_style"]:
-            logging.info("Adding text " + str(context["map_style"]["text"]))
+        if context["hasText"] == True:
+            text = {
+                "primary": context["textPrimary"],
+                "secondary": context["textSecondary"],
+                "coordinate": context["textCoordinates"],
+            }
+            logging.info(f"Adding text {text} to map image")
             Assembler.add_text(
                 img_path=settings.IMAGE_FILE_NAME,
                 out_path=settings.IMAGE_FILE_NAME,
-                msg=context["map_style"]["text"],
+                text=text,
+                frame_size=context["poster_dimension"],
+                style=context["styling"],
+                context=context,
                 verbose=verbose,
             )
         else:
@@ -155,7 +191,7 @@ def run_tile_engine(context, verbose=False) -> int:
     logging.info("adding border to map")
     try:
         Assembler.add_border(
-            map_style=context["map_style"],
+            borders=context["stylingSpecs"]["borders"],
             input_path=settings.IMAGE_FILE_NAME,
             output_path=settings.IMAGE_FILE_NAME,
             verbose=verbose,
