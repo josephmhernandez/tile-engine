@@ -20,7 +20,7 @@ import numpy as np
 from regex import search
 from src.models.border_style import Border
 import numpy as np
-from src.style_constants import map_style, map_font_path, map_pin_path
+from src.style_constants import map_font_path, map_pin_path
 import settings
 
 

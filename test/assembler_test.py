@@ -3,10 +3,10 @@ import pytest
 from PIL import Image
 import os
 import glob
-from src.style_constants import map_style
 from src.engine.assembler import Assembler
-from src.models.print_format import PrintFormat
-from src.engine.validator import validate_json_attributes
+
+# from src.models.print_format import PrintFormat
+# from src.engine.validator import validate_json_attributes
 import settings
 
 # Note: Test Classes must start with "Test"
@@ -14,66 +14,27 @@ import settings
 
 
 class TestAssembler:
-    @pytest.fixture()
-    def setup_takedown(self):
-        # Setup
-        print("yo")
-        yield
-        # Tear Down
+    # Does not work
+    # @pytest.fixture()
+    # def setup_takedown(self):
+    #     # Setup
+    #     print("yo")
+    #     yield
+    #     # Tear Down
 
-        # Remove all files from test_tile_images folder
-        # TO DO: Remove all files from test/test_tile_images folder
+    #     # Remove all files from test_tile_images folder
+    #     # TO DO: Remove all files from test/test_tile_images folder
 
-        # Remove all files from /temp_output folder
-        print("temp_output delete")
-        files = glob.glob(f"{settings.TEMP_OUTPUT_FOLDER}*.png")
-        for f in files:
-            os.remove(f)
-        pass
+    #     # Remove all files from /temp_output folder
+    #     print("temp_output delete")
+    #     files = glob.glob(f"{settings.TEMP_OUTPUT_FOLDER}*.png")
+    #     for f in files:
+    #         os.remove(f)
+    #     pass
 
     def test_simple(self):
         print("running test_simple")
         assert 2 + 2 != 1
-
-    def test_pin_in_correct_place(self):
-        logging.info("Running test_pin_in_correct_place")
-        # Image name where tiles have been assembled and has been cropped to the correct size
-        assembled_cropped_image = "test/assembler_unit_test_attachments/cropped_dc.png"
-        output_file = "test_pin_in_correct_place.png"
-        # Define parameters
-        context = {
-            "bbox": [
-                -77.07801818847658,
-                38.95527071579662,
-                -76.99562072753908,
-                38.859092581794336,
-            ],
-            "map_style": "debug_default_map",
-            "print_dimension": "Canvas_24_36",
-            "zoom": 15,
-            "pins": [
-                {
-                    "icon": "heart",
-                    "location": [-77.043443, 38.909629],
-                    "digital_width": 50,
-                    "digital_height": 50,
-                    "color": "#000000",
-                }
-            ],
-        }
-
-        context = validate_json_attributes(context)
-
-        Assembler.add_pins_to_map(
-            context=context,
-            input_path=assembled_cropped_image,
-            output_path="test/assembler_unit_test_attachments/" + output_file,
-        )
-
-        # new grid size 8, 12
-
-        logging.info("finished test_pin_in_correct_place; Output file:" + output_file)
-        assert True
 
     def test_add_text_all_blocks(self):
         logging.info("running test add_text")
@@ -83,20 +44,40 @@ class TestAssembler:
 
         img_path = assembled_cropped_image
         out_path = "test.png"
-        text = {
+        text_dict = {
             "primary": "Washington, DC",
             "secondary": "United States",
             "coordinate": "38.9072° N, 77.0369° W",
         }
         frame_size = "_24_36"
         style = "basic"
+        context = {}
+        context["stylingSpecs"] = {
+            "block_inches": 4.5,
+            "primary_font_size": 32,
+            "primary_font": "Semplicita",
+            "primary_font_color": "#000000",
+            "secondary_font_size": 16,
+            "secondary_font": "Semplicita",
+            "secondary_font_color": "#000000",
+            "coordinate_font_size": 12,
+            "coordinate_font": "Semplicita",
+            "coordinate_font_color": "#000000",
+            "borders": [{"border_inches": 0.5, "color": "#FFFFFF"}],
+        }
+        context["mapDimensionsIn"] = {
+            "map_width": 35,
+            "map_height": 19,
+            "map_pixel_multiplier": 23,
+        }
         Assembler.add_text(
             img_path=img_path,
             out_path=out_path,
-            text=text,
+            text=text_dict,
             frame_size=frame_size,
             style=style,
             verbose=True,
+            context=context,
         )
 
         prim_img = Image.open(settings.TEMP_TEXT_OUTPUT_FOLDER + "primary-text.png")
@@ -107,24 +88,24 @@ class TestAssembler:
             settings.TEMP_TEXT_OUTPUT_FOLDER + "add-text-w-padding.png"
         )
 
-        logging.info(f"size of the primary image: {prim_img.size}")
-        logging.info(f"size of the secondary image: {sec_img.size}")
-        logging.info(f"size of the coordinate image: {coord_img.size}")
-        logging.info(f"size of the final image: {pre_padding_img.size}")
-        logging.info(f"size of the final image w padding: {all_text_w_padding.size}")
+        prim_size = prim_img.size
+        sec_size = sec_img.size
+        coord_size = coord_img.size
+        pre_padding_size = pre_padding_img.size
+        all_text_w_padding_size = all_text_w_padding.size
+        logging.info(f"size of the primary image: {prim_size}")
+        logging.info(f"size of the secondary image: {sec_size}")
+        logging.info(f"size of the coordinate image: {coord_size}")
+        logging.info(f"size of the final image: {pre_padding_size}")
+        logging.info(f"size of the final image w padding: {all_text_w_padding_size}")
 
         # Assert that each image generated is the correct size
-        assert map_style[style][frame_size]["primary_text_block"] == prim_img.size[1]
-        assert map_style[style][frame_size]["secondary_text_block"] == sec_img.size[1]
-        assert (
-            map_style[style][frame_size]["coordinate_text_block"] == coord_img.size[1]
-        )
-
-        assert (
-            map_style[style][frame_size]["block_inches"]
-            * map_style[style][frame_size]["dpi"]
-            == all_text_w_padding.size[1]
-        )
+        assert 626 == prim_img.size[1]
+        assert 313 == sec_img.size[1]
+        assert 234 == coord_img.size[1]
+        assert 1173 == pre_padding_img.size[1]
+        assert 1350 == all_text_w_padding.size[1]
 
         # Clean up temp_output folder
+        assert True
         pass

@@ -12,7 +12,7 @@ pipenv check
 
 pytest
 
-# Run Test with Logs
+# Run Test with Logs outputted to console / whereever
 
 pytest --log-cli-level=INFO
 
