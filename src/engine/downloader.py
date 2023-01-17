@@ -8,6 +8,9 @@ from src.models.bbox import Bbox
 from src.models.coord import Coord
 import os
 from settings import TEMP_TILE_IMAGE_FOLDER
+import settings
+import glob
+import src.engine.engine_utils as engine_utils
 
 
 class Downloader:
@@ -28,22 +31,12 @@ class Downloader:
         r = requests.get(url, stream=True)
 
         if r.status_code != 200:
-            logging.error("")
+            logging.error(f"Could not download tile: {url}")
 
         # Next we will write the raw content to an image
         with open(file_name, "wb") as f:
             r.raw.decode_content = True
             shutil.copyfileobj(r.raw, f)
-
-    def create_temp_tiles_folder(folder_name):
-        # - Checks to see if the folder exists
-        # - Creates folder if it doesn't exist
-
-        if os.path.isdir(folder_name):
-            logging.info("folder already exists")
-        else:
-            logging.info("create temp folder: " + folder_name)
-            os.mkdir(folder_name)
 
     @staticmethod
     def generate_tile_lists(context):
@@ -54,20 +47,26 @@ class Downloader:
 
         logging.info("url for downloading " + base_url)
 
+        # Top Left and Bottom Right tile.
         tl_tiles = mercantile.tile(
-            float(map_bbox.top_left.lon), float(map_bbox.top_left.lat), zoom
+            float(map_bbox.top_left.lon),
+            float(map_bbox.top_left.lat),
+            zoom,
         )
         br_tiles = mercantile.tile(
-            float(map_bbox.bottom_right.lon), float(map_bbox.bottom_right.lat), zoom
+            float(map_bbox.bottom_right.lon),
+            float(map_bbox.bottom_right.lat),
+            zoom,
         )
 
         x_tile_range = [tl_tiles.x, br_tiles.x]
         y_tile_range = [tl_tiles.y, br_tiles.y]
 
         # Check if folder exists, if not create it
-        Downloader.create_temp_tiles_folder(TEMP_TILE_IMAGE_FOLDER)
+        engine_utils.create_empty_folder(TEMP_TILE_IMAGE_FOLDER)
 
         # Loop over the tile ranges
+        # TO DO: how to optimize performance here with pool size
         pool_size = 10
         pool = ThreadPool(pool_size)
         count = 0
@@ -78,6 +77,7 @@ class Downloader:
                     Downloader.download_tile,
                     (x, y, zoom, base_url, file_name),
                 )
+                # logging.info("downloaded tile...")
                 count += 1
 
         # Close Multi processing
@@ -85,16 +85,13 @@ class Downloader:
         pool.join()
 
         # Check to see if there are enough images in the folder
-        if len(os.listdir("src/tile_images/")) != count:
+        if len(os.listdir(TEMP_TILE_IMAGE_FOLDER)) != count:
             raise RuntimeError(
-                "inncorrect number of files downloaded to assemble the image"
+                f"inncorrect number of files downloaded to assemble the image file: {len(os.listdir(TEMP_TILE_IMAGE_FOLDER))} != {count}"
             )
 
         logging.info(
-            "\tDownloaded tile grid size: "
-            + str(abs(x_tile_range[0] - x_tile_range[1]) + 1)
-            + ", "
-            + str(abs(y_tile_range[0] - y_tile_range[1]) + 1)
+            f"Downloaded tile grid size: {str(abs(x_tile_range[0] - x_tile_range[1]) + 1)} , {str(abs(y_tile_range[0] - y_tile_range[1]) + 1)}"
         )
         return [
             abs(x_tile_range[0] - x_tile_range[1]) + 1,

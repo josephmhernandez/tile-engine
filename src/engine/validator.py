@@ -14,13 +14,36 @@ from src.models.border_style import Border
 def validate_schema(input_payload_dict: dict):
     err_list = []
     payload_schema = Schema(
-        {
-            "bbox": And(Use(list)),
-            "map_style": And(Use(str)),
-            "print_dimension": And(Use(str)),
-            "zoom": And(Use(int)),
-            Optional("pins"): And(Use(list)),
-        }
+        [
+            {
+                "id": And(Use(str)),
+                "orientation": And(Use(str)),
+                "textPrimary": And(Use(str)),
+                "textSecondary": And(Use(str)),
+                "textCoordinates": And(Use(list)),
+                "tileLayer": And(Use(str)),
+                "bbox": And(Use(str)),
+                "zoom": And(Use(int)),
+                "size": And(Use(str)),
+                "styling": And(Use(str)),
+                # TO DO: Add validation to pinList items
+                "pinList": And(Use(list)),
+                # TO DO: Add validation to styling items
+                "styling_specs": And(Use(dict)),
+                "tileZoomOffset": And(Use(int)),
+                # TO DO: Add validation to mapDimensionsIn items
+                "mapDimensionsIn": And(Use(dict)),
+                # TO DO: Add these to payload from commercejs (UI)
+                # "map_style": And(Use(str)),
+                # "print_dimension": And(Use(str)),
+                Optional("center"): And(Use(list)),
+                Optional("description"): And(Use(str)),
+                Optional("lineItemId"): And(Use(str)),
+                Optional("name"): And(Use(str)),
+                Optional("quantity"): And(Use(int)),
+                Optional("unitPrice"): And(Use(float)),
+            }
+        ]
     )
 
     logging.info("validating schema...")
@@ -37,23 +60,63 @@ def validate_schema(input_payload_dict: dict):
 
 
 def validate_json_attributes(input_payload):
+    logging.info(f"validating json attributes... {input_payload}")
+
+    # TO DO: FIX THIS ONLY ONE MAP AT A TIME
+    input_payload = input_payload[0]
+
     context = {}
     try:
+        context["id"] = input_payload["id"]
+        context["orientation"] = input_payload["orientation"]
+        context["textPrimary"] = input_payload["textPrimary"]
+        context["textSecondary"] = input_payload["textSecondary"]
+        context["textCoordinates"] = input_payload["textCoordinates"]
+        context["tileLayer"] = input_payload["tileLayer"]
+        context["stylingSpecs"] = input_payload["styling_specs"]
+        context["styling"] = input_payload["styling"]
+        context["tileZoomOffset"] = int(input_payload["tileZoomOffset"])
+        context["mapDimensionsIn"] = input_payload["mapDimensionsIn"]
+        context["hasText"] = ValueValidator.extract_valid_text_flag(input_payload)
         context["bbox"] = ValueValidator.extract_valid_bbox_value(input_payload["bbox"])
-        context["map_style"] = ValueValidator.extract_valid_map_style_value(
-            input_payload["map_style"]
+        context["zoom"] = (
+            ValueValidator.extract_valid_zoom_value(input_payload["zoom"])
+            + context["tileZoomOffset"]
         )
-        context["map_dimension"] = ValueValidator.extract_valid_print_dimension_value(
-            input_payload["print_dimension"]
-        )
-        context["zoom"] = ValueValidator.extract_valid_zoom_value(input_payload["zoom"])
-        # Optional Elements
-        if "pins" in input_payload:
-            context["pins"] = ValueValidator.extract_valid_pins_value(
-                input_payload["pins"]
-            )
+
+        # TO DO: validate each pin in payload
+        context["pins"] = input_payload["pinList"]
+
+        # TO DO: add map_style to payload from commercejs (UI)
+        if "map_style" not in input_payload:
+            logging.info(f"map_style not in input_payload")
+            context["map_style"] = ValueValidator.extract_valid_map_style_value("basic")
         else:
-            context["pins"] = None
+            context["map_style"] = ValueValidator.extract_valid_map_style_value(
+                input_payload["map_style"]
+            )
+
+        # TO DO: add map_dimesnion to payload from commercejs (UI)
+        if "map_dimension" not in input_payload:
+            logging.info(f"map_dimension not in input_payload")
+            context["map_dimension"] = "_24_36"
+            context["poster_dimension"] = "_24_36"
+        else:
+            context[
+                "map_dimension"
+            ] = ValueValidator.extract_valid_print_dimension_value(
+                input_payload["print_dimension"]
+            )
+            context["poster_dimesnion"] = "_24_36"
+
+        # Optional Elements
+        # if "pins" in input_payload:
+        #     context["pins"] = ValueValidator.extract_valid_pins_value(
+        #         input_payload["pinList"]
+        #     )
+        # else:
+        #     context["pins"] = None
+
     except Exception as e:
         logging.error("This is an error that wasn't caught in the ValueValidator...")
         logging.error(e, exc_info=True)
@@ -85,9 +148,9 @@ def validate_payload(args) -> dict:
         if len(validation_error_list) > 0:
             logging.debug("Error list not empty")
             logging.error(
-                "Error(s) validating payload: " + len(validation_error_list) + " errors"
+                f"Error(s) validating payload: {str(len(validation_error_list))} errors"
             )
-            raise SchemaError(validation_error_list.to_string())
+            raise SchemaError(validation_error_list)
 
     # TO DO:
     #   - Validate BBox values

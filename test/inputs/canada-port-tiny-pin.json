@@ -2,23 +2,26 @@
   {
     "pinList": [
       {
-        "id": "1b4b7954-1306-4654-8dfb-9d4d722552b9",
-        "size": 40,
-        "style": "heart-white-black",
-        "position": { "lat": 38.9220241395773, "lng": -76.95098876953126 }
+        "id": "01575502-5a0f-4a2f-ad57-40bb0bcb4eb6",
+        "size": 20,
+        "style": "circle-black-white",
+        "position": { "lat": 43.63508119651472, "lng": -79.3295282153576 }
       }
     ],
-    "center": [38.9071923, -77.0368707],
+    "center": [43.665388151007356, -79.4538124212782],
     "zoom": 10,
-    "orientation": "landscape",
-    "textPrimary": "Washington D.C.",
-    "textSecondary": "DC, USA",
-    "textCoordinates": "N 38°55'19.29\" W 76°57'3.56\"",
-    "tileLayer": "black-transit",
-    "bbox": "{\"_southWest\":{\"lat\":38.74444410121548,\"lng\":-77.42202758789064},\"_northEast\":{\"lat\":39.069312937859614,\"lng\":-76.65298461914064}}",
+    "orientation": "portrait",
+    "textPrimary": "",
+    "textSecondary": "ON, Canada",
+    "textCoordinates": "",
+    "styling": "basic",
+    "size": "_24_36",
+    "tileLayer": "white-transit",
+    "bbox": "{\"_southWest\":{\"lat\":43.3101903843356,\"lng\":-79.81704711914064},\"_northEast\":{\"lat\":44.01849648651216,\"lng\":-79.09057617187501}}",
+    "tileZoomOffset": "2",
     "quantity": 1,
-    "description": "Map of Washington D.C.",
-    "id": "94305fdd-8698-476f-ab6a-4a5ef174e02b",
+    "description": "Map of ON, Canada",
+    "id": "c7a66bc6-4b09-4e89-afbe-f3ed3069d03b",
     "name": "Personalized Map",
     "unitPrice": 59,
     "lineItemId": [
@@ -61,6 +64,24 @@
         },
         "tax": null
       }
-    ]
+    ],
+    "styling_specs": {
+      "block_inches": 4.5,
+      "primary_font_size": 32,
+      "primary_font": "Semplicita",
+      "primary_font_color": "#000000",
+      "secondary_font_size": 16,
+      "secondary_font": "Semplicita",
+      "secondary_font_color": "#000000",
+      "coordinate_font_size": 12,
+      "coordinate_font": "Semplicita",
+      "coordinate_font_color": "#000000",
+      "borders": [{ "border_inches": 0.5, "color": "#FFFFFF" }]
+    },
+    "mapDimensionsIn": {
+      "map_width": 23,
+      "map_height": 31,
+      "map_pixel_multiplier": 23
+    }
   }
 ]

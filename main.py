@@ -34,12 +34,26 @@ from src.models.print_format import PrintFormat
 from src.models.border_style import Border
 
 import logging
-from json import load
+import json
 from schema import Schema, And, Use, Optional, SchemaError
+import settings
+import src.engine.engine_utils as engine_utils
+import PIL.Image
 
 
-def run_tile_engine(context) -> int:
+def run_tile_engine(context, verbose=False) -> int:
+    """
+    context: contents of the poster payload
+    verbose: flag, print images after each step to assembler_verbose/ for debugging
+    context = {}
+    verbose = False
+    """
+    logging.info("cleaing temp folder...")
 
+    engine_utils.create_empty_folder(settings.TEMP_OUTPUT_FOLDER)
+    engine_utils.create_empty_folder(settings.TEMP_TEXT_OUTPUT_FOLDER)
+    engine_utils.create_empty_folder(settings.TEMP_PIN_OUTPUT_FOLDER)
+    engine_utils.create_empty_folder(settings.TEMP_TILE_IMAGE_FOLDER)
     # Run Downloader
     try:
         logging.info("Running Downloader...")
@@ -58,76 +72,152 @@ def run_tile_engine(context) -> int:
             folder_path=settings.TEMP_TILE_IMAGE_FOLDER,
             tile_grid=new_grid,
             output_img_name=settings.IMAGE_FILE_NAME,
+            verbose=verbose,
         )
+    except Exception as e:
+        logging.error("Assembler returned an error")
+        logging.critical(e, exc_info=True)
+        return engine_status_codes.ASSEMBLER_TILES_FAILURE
 
-        # Crop the image to the specific bbox
-        logging.info("Croppig downloaded images to bbox display")
+    # Crop the image to the specific bbox
+    logging.info("Croppig downloaded images to bbox display")
+    try:
         Assembler.crop_image(
             context["bbox"],
             img_path=settings.IMAGE_FILE_NAME,
             output_path=settings.IMAGE_FILE_NAME,
             zoom=context["zoom"],
+            verbose=verbose,
         )
+    except Exception as e:
+        logging.error("Assembler returned an error")
+        logging.critical(e, exc_info=True)
+        return engine_status_codes.ASSEMBLER_CROP_BBOX_FAILURE
 
-        # Add pins to map
-        logging.info("Add pins to map " + settings.IMAGE_FILE_NAME)
+    # Add pins to map
+    logging.info("Add pins to map " + settings.IMAGE_FILE_NAME)
+    try:
         if context["pins"] != None:
-            logging.info("Adding " + str(len(context["pins"])) + " pins to map image")
+            logging.info(f"Adding {str(len(context['pins']))} pins to map image")
             Assembler.add_pins_to_map(
                 context,
                 input_path=settings.IMAGE_FILE_NAME,
                 output_path=settings.IMAGE_FILE_NAME,
+                verbose=verbose,
             )
         else:
             logging.info("No pins to place on the image")
+    except Exception as e:
+        logging.error("Assembler returned an error")
+        logging.critical(e, exc_info=True)
+        return engine_status_codes.ASSEMBLER_ADD_PIN_FAILURE
 
-        # Add map style
-        logging.info("adding style to the map " + str(context["map_style"]))
-        if (
-            "transparency" in context["map_style"]
-            and context["map_style"]["transparency"] is True
-        ):
-            logging.info("Applying transparency effect to map")
-            Assembler.add_transparency(
-                img_path=settings.IMAGE_FILE_NAME,
-                img_output_path=settings.IMAGE_FILE_NAME,
-            )
-        else:
-            logging.info("No transparency applied to map")
+    logging.info(
+        f"Map is fully assembled need to resize to fit print format. Print format is controleld by dpi: {settings.DPI}"
+    )
 
-        logging.info("Adding text to the image")
-        if "text" in context["map_style"]:
-            logging.info("Adding text " + str(context["map_style"]["text"]))
+    # Resize the image to fit the print format.
+    # We need to resize according to the dpi for the rest of calculation for building the styling.
+    try:
+        logging.info("Resizing image to fit print format")
+        map_img = PIL.Image.open(settings.IMAGE_FILE_NAME)
+        resize_width = int(context["mapDimensionsIn"]["map_width"] * settings.DPI)
+        resize_height = int(context["mapDimensionsIn"]["map_height"] * settings.DPI)
+        size_map_img = map_img.size
+        logging.info(f"Image before resize: {size_map_img}")
+        logging.info(f"Resizing image to ({resize_width}, {resize_height})")
+        logging.info(
+            f"want to be close to zero..... resizing info loss: {float(size_map_img[0] / size_map_img[1]) - float(resize_width / resize_height)}"
+        )
+        map_img = map_img.resize((resize_width, resize_height))
+        map_img.save(settings.IMAGE_FILE_NAME)
+        if verbose:
+            map_img.save(settings.TEMP_RESIZED_OUTPUT)
+
+    except Exception as e:
+        logging.error("Assembler returned an error")
+        logging.critical(e, exc_info=True)
+        return engine_status_codes.MAIN_RESIZE_FAILURE
+
+    # Dont remove. Will use this on other map styles in the future
+    # Add map style
+    # logging.info("adding style to the map " + str(context["map_style"]))
+    # try:
+    #     if (
+    #         "transparency" in context["map_style"]
+    #         and context["map_style"]["transparency"] is True
+    #     ):
+    #         logging.info("Applying transparency effect to map")
+    #         Assembler.add_transparency(
+    #             img_path=settings.IMAGE_FILE_NAME,
+    #             img_output_path=settings.IMAGE_FILE_NAME,
+    #             verbose=verbose,
+    #         )
+    #     else:
+    #         logging.info("No transparency applied to map")
+    # except Exception as e:
+    #     logging.error("Assembler returned an error")
+    #     logging.critical(e, exc_info=True)
+    #     return engine_status_codes.ASSEMBLER_ADD_STYLE_FAILURE
+
+    # Add text to map
+    logging.info("Adding text to the image")
+
+    try:
+        if context["hasText"] == True:
+            text = {
+                "primary": context["textPrimary"],
+                "secondary": context["textSecondary"],
+                "coordinate": context["textCoordinates"],
+            }
+            logging.info(f"Adding text {text} to map image")
             Assembler.add_text(
                 img_path=settings.IMAGE_FILE_NAME,
                 out_path=settings.IMAGE_FILE_NAME,
-                msg=context["map_style"]["text"],
+                text=text,
+                frame_size=context["poster_dimension"],
+                style=context["styling"],
+                context=context,
+                verbose=verbose,
             )
         else:
             logging.info("No text added to the image")
+    except Exception as e:
+        logging.error("Assembler returned an error")
+        logging.critical(e, exc_info=True)
+        return engine_status_codes.ASSEMBLER_ADD_TEXT_FAILURE
 
-        # Add map border
-        logging.info("adding border to map")
+    # Add map border
+    logging.info("adding border to map")
+    try:
         Assembler.add_border(
-            map_style=context["map_style"],
+            borders=context["stylingSpecs"]["borders"],
             input_path=settings.IMAGE_FILE_NAME,
             output_path=settings.IMAGE_FILE_NAME,
+            verbose=verbose,
         )
 
     except Exception as e:
         logging.error("Assembler returned an error")
         logging.critical(e, exc_info=True)
-        return engine_status_codes.ASSEMBLER_FAILURE
+        return engine_status_codes.ASSEMBLER_ADD_BORDER_FAILURE
 
+    logging.info("Tile engine completed successfully")
     return engine_status_codes.ENGINE_SUCCESS
 
 
-def main(args) -> int:
+def adjust_pil_settings():
+    # Increase PIL image size limit
+    PIL.Image.MAX_IMAGE_PIXELS = 178956969
+
+
+def main(args, verbose=False) -> int:
     # Return engine tile code.
     # Set up logger
     logging.basicConfig(
         format="%(asctime)s %(levelname)-8s %(message)s",
-        filename=settings.LOG_FILENAME,
+        # TO DO: make this a command line argument
+        # filename=settings.LOG_FILENAME,
         level=logging.INFO,
         datefmt="%Y-%m-%d %H:%M:%S",
     )
@@ -138,8 +228,10 @@ def main(args) -> int:
 
     # Run tile engine
     logging.info("Running tile engine...")
-    logging.info("tile-engine context: " + str(context))
-    return run_tile_engine(context)
+    logging.info(f"tile-engine context: {str(context)} ")
+    adjust_pil_settings()
+    engine_code = run_tile_engine(context, verbose=verbose)
+    return engine_code
 
 
 if __name__ == "__main__":
@@ -155,8 +247,9 @@ if __name__ == "__main__":
             logs_location
 
     """
+    print("starting...")
     try:
-        code = main(sys.argv)
+        code = main(sys.argv, verbose=True)
         logging.info("finished with Engine result code " + str(code))
     except Exception as e:
         # Maybe this will always run?

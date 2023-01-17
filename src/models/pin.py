@@ -11,7 +11,7 @@ class IterableBorder(type):
 
 @dataclass
 class Pin:
-    icon: Icon  # enum for pin icon type
+    icon: str  # enum for pin icon type
     location: Coord  # leaflet digital location (lon, lat)
     digital_width: int  # leaflet digital pin size (pixels)
     digital_height: int  # leaflet digital pin size (pixels)
@@ -31,7 +31,7 @@ class Pin:
         color: str,
     ) -> None:
 
-        self.icon = Icon[icon.upper()]
+        self.icon = icon.lower()
         self.location = Coord(location[0], location[1])
         self.digital_height = digital_height
         self.digital_width = digital_width
