@@ -1,7 +1,7 @@
 from src.models.bbox import Bbox
 from src.models.coord import Coord
 
-# from src.models.map_style import get_map_style_specifications
+from src.models.map_style import get_map_style_specifications
 from src.models.pin import Pin
 from typing import List
 import logging
@@ -36,7 +36,7 @@ class ValueValidator:
 
     @staticmethod
     def extract_valid_map_style_value(map_style: str) -> dict:
-        logging.info("extract map style specifications")
+        logging.info("extract map style specifications... map_style: " + map_style)
         # TO DO: Make this method call cleaner. pls.
         rtn_style = get_map_style_specifications(map_style)
         return rtn_style
