@@ -23,7 +23,7 @@ pytest test/assembler_test.py::TestAssembler::test_add_text_all_blocks
 
 # Run the application
 
-pipenv run python3 main.py test/inputs/sample_input_payload.json
+pipenv run python3 main.py test/inputs/
 RUN WITH LOGS TO CONSOLE:
 Comment out line in logging.basicCongig in main.py
 

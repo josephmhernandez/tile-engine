@@ -89,7 +89,7 @@ def validate_json_attributes(input_payload):
 
         # TO DO: add map_style to payload from commercejs (UI)
         if "map_style" not in input_payload:
-            logging.info(f"map_style not in input_payload")
+            logging.debug(f"map_style not in input_payload")
             context["map_style"] = ValueValidator.extract_valid_map_style_value("basic")
         else:
             context["map_style"] = ValueValidator.extract_valid_map_style_value(
