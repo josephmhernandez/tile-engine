@@ -14,9 +14,6 @@ TILE_API_KEY = ""
 LOG_FILENAME = "logs.log"
 
 
-# Testing
-ASSEMBLER_TEST_FOLDER = "test/assembler_unit_test_attachments/"
-
 # xxxxxx for unit testing -> delete folder after each unit test
 # temp_output is used to store output at each engine step if flag is set.
 TEMP_OUTPUT_FOLDER = "src/temp_output/"

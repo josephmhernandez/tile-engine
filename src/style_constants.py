@@ -30,13 +30,18 @@ map_font_path = {
     "Semplicita": "src/fonts/Semplicita-Modern-Medium.otf",
 }
 
+# High resolution pins: 3800px x 3800px
 map_pin_path = {
-    "heart-black-white": "src/images/pins/heart-pin-square-black-white.png",
-    "heart-white-black": "src/images/pins/heart-pin-square-white-black.png",
-    "circle-white-black": "src/images/pins/circle-pin-square-white-black.png",
-    "circle-black-white": "src/images/pins/circle-pin-square-black-white.png",
-    "diamond-white-black": "src/images/pins/diamond-pin-square-white-black.png",
-    "diamond-black-white": "src/images/pins/diamond-pin-square-black-white.png",
+    "heart-black-white": "src/images/pins/pin-heart-black-white.png",
+    "heart-white-black": "src/images/pins/pin-heart-white-black.png",
+    "circle-white-black": "src/images/pins/pin-circle-white-black.png",
+    "circle-black-white": "src/images/pins/pin-circle-black-white.png",
+    "diamond-white-black": "src/images/pins/pin-diamond-white-black.png",
+    "diamond-black-white": "src/images/pins/pin-diamond-black-white.png",
+    "beach-black-white": "src/images/pins/pin-beach-black-white.png",
+    "beach-white-black": "src/images/pins/pin-beach-white-black.png",
+    "mountain-black-white": "src/images/pins/pin-mountain-black-white.png",
+    "mountain-white-black": "src/images/pins/pin-mountain-white-black.png",
 }
 
 # 300 pixels per inch
