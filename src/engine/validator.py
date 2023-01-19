@@ -42,6 +42,7 @@ def validate_schema(input_payload_dict: dict):
                 Optional("name"): And(Use(str)),
                 Optional("quantity"): And(Use(int)),
                 Optional("unitPrice"): And(Use(float)),
+                Optional("location"): And(Use(str)),
             }
         ]
     )

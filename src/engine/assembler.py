@@ -231,7 +231,11 @@ class Assembler:
 
     @staticmethod
     def add_border(
-        borders: list, input_path: str, output_path: str, verbose: bool = False
+        borders: list,
+        input_path: str,
+        output_path: str,
+        hasText: bool,
+        verbose: bool = False,
     ):
         # If Input path and output path are the same the image will be overwritten
         # border width dimensions in pixels
@@ -257,6 +261,16 @@ class Assembler:
             )
             # else:
             # print("hex code doesn't exist" +  str(border.width) + str(border.color))
+
+        # Remove when we have a better way of handling no text on map. Need border payload that's passed from ui.
+        if not hasText:
+            pix_size = int(settings.DPI * borders[0]["border_inches"])
+            img = ImageOps.expand(
+                img,
+                # (e, n, w, s)
+                border=(0, 0, 0, pix_size),
+                fill=borders[0]["color"],
+            )
 
         if verbose:
             logging.info(f"saving map with border to {settings.TEMP_OUTPUT_FOLDER}")
