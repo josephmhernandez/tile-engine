@@ -194,8 +194,17 @@ def run_tile_engine(context, verbose=False) -> int:
             borders=context["stylingSpecs"]["borders"],
             input_path=settings.IMAGE_FILE_NAME,
             output_path=settings.IMAGE_FILE_NAME,
+            hasText=context["hasText"],
             verbose=verbose,
         )
+
+        # if context["hasText"] == False:
+        #     Assembler.add_border(
+        #         borders=context["stylingSpecs"]["borders"],
+        #         input_path=settings.IMAGE_FILE_NAME,
+        #         output_path=settings.IMAGE_FILE_NAME,
+        #         verbose=verbose,
+        #     )
 
     except Exception as e:
         logging.error("Assembler returned an error")
@@ -228,6 +237,7 @@ def main(args, verbose=False) -> int:
 
     # Run tile engine
     logging.info("Running tile engine...")
+    # To change this output as a string you need to add a json convertor to Bbox and Coordinate and other DTOs that don't allow json.dump method on them.
     logging.info(f"tile-engine context: {str(context)} ")
     adjust_pil_settings()
     engine_code = run_tile_engine(context, verbose=verbose)
