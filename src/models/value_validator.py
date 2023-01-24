@@ -1,12 +1,13 @@
 from src.models.bbox import Bbox
 from src.models.coord import Coord
 
-from src.models.map_style import get_map_style_specifications
+# from src.models.map_style import get_map_style_specifications
 from src.models.pin import Pin
 from typing import List
 import logging
 import json
 from src.models.print_format import PrintFormat
+from src.style_constants import API_DICT
 
 
 class ValueValidator:
@@ -38,7 +39,14 @@ class ValueValidator:
     def extract_valid_map_style_value(map_style: str) -> dict:
         logging.info("extract map style specifications... map_style: " + map_style)
         # TO DO: Make this method call cleaner. pls.
-        rtn_style = get_map_style_specifications(map_style)
+        # rtn_style = get_map_style_specifications(map_style)
+
+        rtn_style = {
+            "api": API_DICT[map_style]["url"],
+        }
+
+        print("RTN_STYLE::::::: ", rtn_style)
+
         return rtn_style
 
     @staticmethod

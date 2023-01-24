@@ -1,20 +1,20 @@
 [
   {
     "pinList": [],
-    "center": [37.80096851899704, -122.4064064025879],
-    "zoom": 12,
+    "center": [18.248263648613058, -66.17683410644533],
+    "zoom": 10,
     "orientation": "landscape",
-    "textPrimary": "San Francisco",
-    "textSecondary": "",
+    "textPrimary": "San Juan",
+    "textSecondary": "Puerto Rico",
     "textCoordinates": "",
     "styling": "basic",
     "size": "_24_36",
-    "tileLayer": "white-transit",
-    "bbox": "{\"_southWest\":{\"lat\":37.7416707659231,\"lng\":-122.54459381103517},\"_northEast\":{\"lat\":37.86021777498129,\"lng\":-122.26821899414064}}",
+    "tileLayer": "black-transit",
+    "bbox": "{\"_southWest\":{\"lat\":17.96305758238804,\"lng\":-66.72958374023439},\"_northEast\":{\"lat\":18.533002385490306,\"lng\":-65.62408447265626}}",
     "tileZoomOffset": "2",
     "quantity": 1,
-    "description": "Map of San Francisco",
-    "id": "9bb302d9-4167-41f3-8b7b-7d1d41f54599",
+    "description": "Map of San Juan",
+    "id": "c1197476-73a4-456d-b2e2-c84c353bbe68",
     "name": "Personalized Map",
     "unitPrice": 59,
     "lineItemId": [
@@ -25,7 +25,7 @@
         "product_name": "Personalized Map",
         "sku": null,
         "permalink": "qNG91W",
-        "quantity": 1,
+        "quantity": 2,
         "price": {
           "raw": 59,
           "formatted": "59.00",
@@ -33,10 +33,10 @@
           "formatted_with_code": "59.00 USD"
         },
         "line_total": {
-          "raw": 59,
-          "formatted": "59.00",
-          "formatted_with_symbol": "$59.00",
-          "formatted_with_code": "59.00 USD"
+          "raw": 118,
+          "formatted": "118.00",
+          "formatted_with_symbol": "$118.00",
+          "formatted_with_code": "118.00 USD"
         },
         "is_valid": true,
         "product_meta": [],

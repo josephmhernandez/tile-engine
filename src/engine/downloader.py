@@ -11,6 +11,7 @@ from settings import TEMP_TILE_IMAGE_FOLDER
 import settings
 import glob
 import src.engine.engine_utils as engine_utils
+from src.style_constants import API_DICT
 
 
 class Downloader:
@@ -42,7 +43,7 @@ class Downloader:
     def generate_tile_lists(context):
 
         map_bbox = context["bbox"]
-        base_url = context["map_style"]["api"]
+        base_url = API_DICT[context["tileLayer"]]["url"]
         zoom = context["zoom"]
 
         logging.info("url for downloading " + base_url)

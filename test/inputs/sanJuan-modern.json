@@ -1,21 +1,20 @@
 [
   {
     "pinList": [],
-    "location": "New York City",
-    "center": [40.7128, -74.006],
-    "zoom": 10,
-    "orientation": "portrait",
-    "textPrimary": "",
+    "center": [18.211741476968246, -66.29493713378908],
+    "zoom": 9,
+    "orientation": "landscape",
+    "textPrimary": "San Juan, Puerto Rico",
     "textSecondary": "",
-    "textCoordinates": "",
+    "textCoordinates": "N 18°12'42.27\" W 66°17'41.77\"",
     "styling": "basic",
     "size": "_24_36",
-    "tileLayer": "white-transit",
-    "bbox": "{\"_southWest\":{\"lat\":40.29209669470104,\"lng\":-74.36920166015626},\"_northEast\":{\"lat\":41.13005574377673,\"lng\":-73.64273071289064}}",
+    "tileLayer": "modern-light",
+    "bbox": "{\"_southWest\":{\"lat\":17.641404631355755,\"lng\":-67.40112304687501},\"_northEast\":{\"lat\":18.781516724349718,\"lng\":-65.19012451171876}}",
     "tileZoomOffset": "2",
     "quantity": 1,
-    "description": "TO DO: Center of Map",
-    "id": "3ed4ce7b-ed82-4878-bbae-504c9c35fc27",
+    "description": "Map of San Juan, Puerto Rico",
+    "id": "6483c892-126f-45e9-83fb-3d3d870e11ed",
     "name": "Personalized Map",
     "unitPrice": 59,
     "lineItemId": [
@@ -73,8 +72,8 @@
       "borders": [{ "border_inches": 0.5, "color": "#FFFFFF" }]
     },
     "mapDimensionsIn": {
-      "map_width": 23,
-      "map_height": 35,
+      "map_width": 35,
+      "map_height": 19,
       "map_pixel_multiplier": 23
     }
   }
