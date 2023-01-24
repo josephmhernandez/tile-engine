@@ -89,13 +89,14 @@ def validate_json_attributes(input_payload):
         context["pins"] = input_payload["pinList"]
 
         # TO DO: add map_style to payload from commercejs (UI)
-        if "map_style" not in input_payload:
-            logging.debug(f"map_style not in input_payload")
-            context["map_style"] = ValueValidator.extract_valid_map_style_value("basic")
-        else:
-            context["map_style"] = ValueValidator.extract_valid_map_style_value(
-                input_payload["map_style"]
-            )
+        # if "map_style" not in input_payload:
+        #     logging.debug(f"map_style not in input_payload")
+        #     raise ValueError("map_style not in input_payload")
+        #     # context["map_style"] = ValueValidator.extract_valid_map_style_value("basic")
+        # else:
+        #     context["map_style"] = ValueValidator.extract_valid_map_style_value(
+        #         input_payload["map_style"]
+        #     )
 
         # TO DO: add map_dimesnion to payload from commercejs (UI)
         if "map_dimension" not in input_payload:

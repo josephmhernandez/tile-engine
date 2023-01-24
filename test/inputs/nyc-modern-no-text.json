@@ -2,26 +2,27 @@
   {
     "pinList": [
       {
-        "id": "1f2ab391-8147-4f2d-b3b4-c334e7dd8f44",
-        "size": 40,
+        "id": "6e43cf68-bf09-47e9-ba41-4c915f9b028d",
+        "size": 70,
         "style": "heart-black-white",
-        "position": { "lat": 47.6062095, "lng": -122.3320708 }
+        "position": { "lat": 40.61290995023096, "lng": -73.95858764648439 }
       }
     ],
-    "center": [47.6062095, -122.3320708],
+    "location": "New York City",
+    "center": [40.60613336268842, -74.0416717529297],
     "zoom": 10,
     "orientation": "portrait",
-    "textPrimary": "Seattle",
-    "textSecondary": "WA, USA",
-    "textCoordinates": "N 47°36'22.35\" W 122°19'55.45\"",
+    "textPrimary": "",
+    "textSecondary": "",
+    "textCoordinates": "",
     "styling": "basic",
     "size": "_24_36",
-    "tileLayer": "white-transit",
-    "bbox": "{\"_southWest\":{\"lat\":47.27550216573706,\"lng\":-122.69531250000001},\"_northEast\":{\"lat\":47.93566683402829,\"lng\":-121.96884155273439}}",
+    "tileLayer": "modern-light",
+    "bbox": "{\"_southWest\":{\"lat\":40.18516846826054,\"lng\":-74.40490722656251},\"_northEast\":{\"lat\":41.02446333535115,\"lng\":-73.67843627929689}}",
     "tileZoomOffset": "2",
     "quantity": 1,
-    "description": "Map of Seattle",
-    "id": "605b3287-423d-4d54-ae16-fa95542fa683",
+    "description": "Map at coordinates 40.60613336268842, -74.0416717529297",
+    "id": "be88c396-52d7-472d-8eaa-c41e5a16a115",
     "name": "Personalized Map",
     "unitPrice": 59,
     "lineItemId": [
@@ -32,7 +33,7 @@
         "product_name": "Personalized Map",
         "sku": null,
         "permalink": "qNG91W",
-        "quantity": 1,
+        "quantity": 2,
         "price": {
           "raw": 59,
           "formatted": "59.00",
@@ -40,10 +41,10 @@
           "formatted_with_code": "59.00 USD"
         },
         "line_total": {
-          "raw": 59,
-          "formatted": "59.00",
-          "formatted_with_symbol": "$59.00",
-          "formatted_with_code": "59.00 USD"
+          "raw": 118,
+          "formatted": "118.00",
+          "formatted_with_symbol": "$118.00",
+          "formatted_with_code": "118.00 USD"
         },
         "is_valid": true,
         "product_meta": [],
@@ -75,11 +76,12 @@
       "secondary_font_color": "#000000",
       "coordinate_font_size": 12,
       "coordinate_font": "Semplicita",
-      "coordinate_font_color": "#000000"
+      "coordinate_font_color": "#000000",
+      "borders": [{ "border_inches": 0.5, "color": "#FFFFFF" }]
     },
     "mapDimensionsIn": {
       "map_width": 23,
-      "map_height": 31,
+      "map_height": 35,
       "map_pixel_multiplier": 23
     }
   }
