@@ -33,28 +33,22 @@ class Assembler:
         logging.info("size of image " + str(tile_grid))
         # Make a list of the image names
         image_files = [folder_path + f for f in listdir(folder_path)]
-        print("here")
         # Open the image set using pillow
         images = [Image.open(x) for x in image_files]
-        print("here0")
         # Calculate the number of image tiles in each direction
         edge_length_x = tile_grid[0]
         edge_length_y = tile_grid[1]
-        print("here1")
         # Find the final composed image dimensions
         width, height = images[0].size
         total_width = width * edge_length_x
         total_height = height * edge_length_y
-        print("here4")
         # Create a new blank image we will fill in
         composite = Image.new("RGB", (total_width, total_height))
-        print("here5")
 
         # Loop over the x and y ranges
         y_offset = 0
         for i in range(0, edge_length_x):
             x_offset = 0
-            print("here6")
 
             for j in range(0, edge_length_y):
                 # Open up the image file and paste it into the composed
@@ -64,17 +58,13 @@ class Assembler:
                 x_offset += width  # Update the width
             y_offset += height  # Update the height
 
-        print("here7")
         # Save the final image
         composite.save("./" + output_img_name)
 
-        print("here8")
         if verbose:
-            print("here9")
             logging.info(f"saving assembled image to {settings.TEMP_OUTPUT_FOLDER}")
             composite.save(settings.TEMP_OUTPUT_FOLDER + "assemble-tiles.png")
 
-        print("here10")
         logging.info("output image: " + output_img_name)
 
     @staticmethod
@@ -181,7 +171,6 @@ class Assembler:
         logging.info("pin location on print y: " + str(print_pin_location_y))
 
         # Resize pin image
-        # hererjekrje;l
         new_pin_dim = src.engine.engine_utils.get_pin_size(context, pin, map_dim)
         logging.info("pin pixel size on map " + str(new_pin_dim))
         pin_img = pin_img.resize(new_pin_dim)
