@@ -48,6 +48,12 @@ def run_tile_engine(context, verbose=False) -> int:
     context = {}
     verbose = False
     """
+
+    logging.info("starting tile engine...")
+    my_id = context["id"]
+    settings.IMAGE_FILE_NAME = f"map_{my_id}.png"
+    logging.info(f"producing map...{settings.IMAGE_FILE_NAME}")
+
     logging.info("cleaing temp folder...")
 
     engine_utils.create_empty_folder(settings.TEMP_OUTPUT_FOLDER)
