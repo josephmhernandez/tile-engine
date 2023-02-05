@@ -1,0 +1,81 @@
+[
+  {
+    "pinList": [],
+    "location": "New York City",
+    "center": [11.39387923296741, -79.32143703962672],
+    "zoom": 4,
+    "orientation": "portrait",
+    "textPrimary": "",
+    "textSecondary": "",
+    "textCoordinates": "",
+    "styling": "basic",
+    "size": "_24_36",
+    "tileLayer": "test",
+    "bbox": "{\"_southWest\":{\"lat\":-23.241346102386135,\"lng\":-102.56835937500001},\"_northEast\":{\"lat\":42.35854391749705,\"lng\":-56.07421875000001}}",
+    "tileZoomOffset": "2",
+    "quantity": 1,
+    "description": "Map at coordinates 11.39387923296741, -79.32143703962672",
+    "id": "c865e93e-759c-4a2e-b9a9-f65a8f501231",
+    "name": "Personalized Map",
+    "unitPrice": 59.99,
+    "lineItemId": [
+      {
+        "id": "item_7RyWOwmK5nEa2V",
+        "product_id": "prod_VKXmwDy717orgD",
+        "name": "Personalized Map",
+        "product_name": "Personalized Map",
+        "sku": null,
+        "permalink": "qNG91W",
+        "quantity": 1,
+        "price": {
+          "raw": 59.99,
+          "formatted": "59.99",
+          "formatted_with_symbol": "$59.99",
+          "formatted_with_code": "59.99 USD"
+        },
+        "line_total": {
+          "raw": 59.99,
+          "formatted": "59.99",
+          "formatted_with_symbol": "$59.99",
+          "formatted_with_code": "59.99 USD"
+        },
+        "is_valid": true,
+        "product_meta": [],
+        "selected_options": [],
+        "variant": null,
+        "image": {
+          "id": "ast_zkK6oL4px6oXn0",
+          "url": "https://cdn.chec.io/merchants/47490/assets/kZMUMRzFW7FtbrXK|8.png",
+          "description": null,
+          "is_image": true,
+          "filename": "8.png",
+          "file_size": 10733318,
+          "file_extension": "png",
+          "image_dimensions": { "width": 4127, "height": 2740 },
+          "meta": [],
+          "created_at": 1674620034,
+          "updated_at": 1674620044
+        },
+        "tax": null
+      }
+    ],
+    "styling_specs": {
+      "block_inches": 4.5,
+      "primary_font_size": 32,
+      "primary_font": "Semplicita",
+      "primary_font_color": "#000000",
+      "secondary_font_size": 16,
+      "secondary_font": "Semplicita",
+      "secondary_font_color": "#000000",
+      "coordinate_font_size": 12,
+      "coordinate_font": "Semplicita",
+      "coordinate_font_color": "#000000",
+      "borders": [{ "border_inches": 0.5, "color": "#FFFFFF" }]
+    },
+    "mapDimensionsIn": {
+      "map_width": 23,
+      "map_height": 35,
+      "map_pixel_multiplier": 23
+    }
+  }
+]
