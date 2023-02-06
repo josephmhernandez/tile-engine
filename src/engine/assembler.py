@@ -407,7 +407,6 @@ class Assembler:
 
         # Total size of image block
         map_img = Image.open(img_path)
-        map_width, map_height = map_img.size
 
         # Get text block background color, text color
         colorDict = context["textStylingSpecs"]["text"]["color"]
@@ -637,6 +636,11 @@ class Assembler:
         radius = int(re.sub("[^0-9]", "", textBlockSpecs["rounded"]))
         if radius > 0:
             # radius = radius * context["mapDimensionsIn"]["map_pixel_multiplier"]
+            radius = Assembler.calc_text_size(
+                font_px=radius,
+                px_mult=context["mapDimensionsIn"]["map_pixel_multiplier"],
+                dpi=settings.DPI,
+            )
             new_img_obj = Image.new("RGBA", final_img.size)
             draw = ImageDraw.Draw(new_img_obj)
             draw.rounded_rectangle(
@@ -646,8 +650,6 @@ class Assembler:
             )
 
             # Paste the text image on top of the rounded rectangle
-            new_img_obj.show()
-            final_img.show()
             new_img_obj.paste(final_img, (0, 0), final_img)
             if verbose:
                 logging.info(
@@ -657,6 +659,21 @@ class Assembler:
                     settings.TEMP_TEXT_OUTPUT_FOLDER
                     + "all-text-with-padding-rounded.png"
                 )
-            new_img_obj.show()
+            final_img = new_img_obj
 
         # Paste the image on the map.
+        w, h = final_img.size
+        map_width, map_height = map_img.size
+        # text_block_y in inches
+        text_block_y = float(textBlockSpecs["spacing"]) * settings.DPI
+        paste_y = map_height - int(text_block_y + h)
+        paste_x = (map_width / 2) - (w / 2)
+
+        map_img.paste(final_img, (int(paste_x), int(paste_y)), final_img)
+        if verbose:
+            logging.info(
+                f"saving final map with text block to {settings.TEMP_TEXT_OUTPUT_FOLDER}"
+            )
+            map_img.save(settings.TEMP_TEXT_OUTPUT_FOLDER + "map-with-text.png")
+
+        map_img.save(out_path)
