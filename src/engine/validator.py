@@ -33,6 +33,8 @@ def validate_schema(input_payload_dict: dict):
                 "tileZoomOffset": And(Use(int)),
                 # TO DO: Add validation to mapDimensionsIn items
                 "mapDimensionsIn": And(Use(dict)),
+                "text_styling_specs": And(Use(dict)),
+                "isTransparentTextBlock": And(Use(bool)),
                 # TO DO: Add these to payload from commercejs (UI)
                 # "map_style": And(Use(str)),
                 # "print_dimension": And(Use(str)),
@@ -84,7 +86,8 @@ def validate_json_attributes(input_payload):
             ValueValidator.extract_valid_zoom_value(input_payload["zoom"])
             + context["tileZoomOffset"]
         )
-
+        context["textStylingSpecs"] = input_payload["text_styling_specs"]
+        context["isTransparentTextBlock"] = input_payload["isTransparentTextBlock"]
         # TO DO: validate each pin in payload
         context["pins"] = input_payload["pinList"]
 

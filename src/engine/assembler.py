@@ -22,6 +22,7 @@ from src.models.border_style import Border
 import numpy as np
 from src.style_constants import map_font_path, map_pin_path
 import settings
+import re
 
 
 class Assembler:
@@ -43,7 +44,7 @@ class Assembler:
         total_width = width * edge_length_x
         total_height = height * edge_length_y
         # Create a new blank image we will fill in
-        composite = Image.new("RGB", (total_width, total_height))
+        composite = Image.new("RGBA", (total_width, total_height))
 
         # Loop over the x and y ranges
         y_offset = 0
@@ -289,15 +290,20 @@ class Assembler:
         img.save(img_output_path)
 
     @staticmethod
-    def create_image(size, bgColor, message, font, fontColor):
+    def create_image(bgColor, message, font, fontColor, padding):
         """
         Creates an image block with the given message
         """
-        W, H = size
-        image = Image.new("RGB", size, bgColor)
+        W, H = font.getsize(message)
+
+        # W, H = size
+        print(bgColor)
+        image = Image.new("RGBA", (W, H), bgColor)
         draw = ImageDraw.Draw(image)
         _, _, w, h = draw.textbbox((0, 0), message, font=font)
         draw.text(((W - w) / 2, (H - h) / 2), message, font=font, fill=fontColor)
+        # (e, n, w, s)
+        image = ImageOps.expand(image, border=(0, padding, 0, padding), fill=bgColor)
         return image
 
     @staticmethod
@@ -305,14 +311,16 @@ class Assembler:
         """
         Concatenates two images vertically
         """
-        dst = Image.new("RGB", (max(img1.width, img2.width), img1.height + img2.height))
+        dst = Image.new(
+            "RGBA", (max(img1.width, img2.width), img1.height + img2.height)
+        )
         dst.paste(img1, (0, 0))
         dst.paste(img2, (0, img1.height))
 
         if img3:
             logging.debug("concatenating 3 images")
             rtnImg = Image.new(
-                "RGB", (max(dst.width, img3.width), dst.height + img3.height)
+                "RGBA", (max(dst.width, img3.width), dst.height + img3.height)
             )
             rtnImg.paste(dst, (0, 0))
             rtnImg.paste(img3, (0, dst.height))
@@ -329,12 +337,21 @@ class Assembler:
         return int((font_px / px_mult) * dpi)
 
     @staticmethod
+    def add_padding(img, padding, background_color):
+        """
+        Adds padding to the image
+        """
+        # add half the padding to the left and half to the right
+        # (e, n, w, s)
+        border = (int(padding / 2), 0, int(padding / 2), 0)
+        return ImageOps.expand(img, border=border, fill=background_color)
+
+    @staticmethod
     def add_text(
         img_path: str,
         out_path: str,
         text: dict,
         frame_size: str,
-        style: str,
         verbose: bool = False,
         context: dict = None,
     ):
@@ -352,52 +369,92 @@ class Assembler:
             "secondary": "MediumText",
             "coordinate": "DelimitedDegreeMinutesSecondsWDirection",
         }
-        style: "basic"
+        context["textStylingSpecs"] ={
+            'id': 'dark-transit',
+            'iconImg': '/blackWhiteSquareIcon.svg',
+            'url': 'https://api.maptiler.com/maps/265e1571-5b2a-47cf-bdf4-0f78abaefb47/{z}/{x}/{y}.png?key=fLxXsh3K0MP3y21i3bJs',
+            'text': {
+                'fontFamily': {
+                    'primary': 'Semplicita',
+                    'secondary': 'Semplicita',
+                    'coordinate': 'Semplicita'
+                },
+                'size': {
+                    'primary': '24',
+                    'secondary': '12',
+                    'coordinate': '8'
+                },
+                'color': {
+                    'background': '#FFFFFF',
+                    'primary': '#000000',
+                    'secondary': '#000000',
+                    'coordinate': '#000000'
+                },
+                'color_transparent': {
+                    'background': '#0000',
+                    'primary': '#FFFFFF',
+                    'secondary': '#FFFFFF',
+                    'coordinate': '#FFFFFF'
+                },
+                'textBlock': {
+                    'padding': '8px', // Padding around text block (px)
+                    'rounded': '8px', // Corners rounded (px)
+                    'spacing': '1' // Inches between the bottom of the map and the bottom of the text block
+                }
+            }
+        }
         """
 
         # Total size of image block
         map_img = Image.open(img_path)
-        map_width, map_height = map_img.size
 
-        # Not sure if we switch map width the beginning etc
-        width = map_width
-        logging.debug(f"text block width will be: {width}")
+        # Get text block background color, text color
+        colorDict = context["textStylingSpecs"]["text"]["color"]
+        if context["isTransparentTextBlock"]:
+            colorDict = context["textStylingSpecs"]["text"]["color_transparent"]
+        sizeDict = context["textStylingSpecs"]["text"]["size"]
+        fontDict = context["textStylingSpecs"]["text"]["fontFamily"]
+        textBlockSpecs = context["textStylingSpecs"]["text"]["textBlock"]
 
         # Generate the primary, secondary, coordinate text blocks
         primary_img = None
         secondary_img = None
         coordinate_img = None
 
-        # trying to delete this.
-        # style_dict = map_style[style]
-        # text_size_dict = style_dict[frame_size]
+        primary_img_width = 0
+        secondary_img_width = 0
+        coordinate_img_width = 0
 
-        style_dict = context["stylingSpecs"]
-
+        # style_dict = context["stylingSpecs"]
+        # Put all text on transparent background
+        transparent_background = (255, 0, 0, 0)
         if text["primary"] and text["primary"] != "":
             logging.debug(f'primary text found: {text["primary"]}')
 
             prim_font_size = Assembler.calc_text_size(
-                font_px=style_dict["primary_font_size"],
+                font_px=int(sizeDict["primary"]),
                 px_mult=context["mapDimensionsIn"]["map_pixel_multiplier"],
                 dpi=settings.DPI,
             )
             primary_font = ImageFont.truetype(
-                map_font_path[style_dict["primary_font"]],
+                map_font_path[fontDict["primary"]],
                 prim_font_size,
             )
-            prim_block_size = Assembler.calc_text_size(
-                font_px=int(style_dict["primary_font_size"] / 2)
-                + style_dict["primary_font_size"],
-                px_mult=context["mapDimensionsIn"]["map_pixel_multiplier"],
-                dpi=settings.DPI,
-            )
+
+            # for concatenation
+            primary_img_width = primary_font.getsize(text["primary"])[0]
+            print(int(sizeDict["primary"]))
+            # For padding on text images
             primary_img = Assembler.create_image(
-                (width, prim_block_size),
-                "white",
+                transparent_background,
                 text["primary"],
                 primary_font,
-                style_dict["primary_font_color"],
+                colorDict["primary"],
+                padding=Assembler.calc_text_size(
+                    font_px=int(int(sizeDict["primary"]) / 4),
+                    px_mult=context["mapDimensionsIn"]["map_pixel_multiplier"],
+                    dpi=settings.DPI,
+                ),
             )
             if verbose:
                 logging.info(
@@ -408,26 +465,28 @@ class Assembler:
         if text["secondary"] and text["secondary"] != "":
             logging.debug(f'secondary text found: {text["secondary"]}')
             sec_font_size = Assembler.calc_text_size(
-                font_px=style_dict["secondary_font_size"],
+                font_px=int(sizeDict["secondary"]),
                 px_mult=context["mapDimensionsIn"]["map_pixel_multiplier"],
                 dpi=settings.DPI,
             )
             secondary_font = ImageFont.truetype(
-                map_font_path[style_dict["secondary_font"]],
+                map_font_path[fontDict["secondary"]],
                 sec_font_size,
             )
-            sec_block_size = Assembler.calc_text_size(
-                font_px=int(style_dict["secondary_font_size"] / 2)
-                + style_dict["secondary_font_size"],
-                px_mult=context["mapDimensionsIn"]["map_pixel_multiplier"],
-                dpi=settings.DPI,
-            )
+
+            # for concatenation
+            secondary_img_width = secondary_font.getsize(text["secondary"])[0]
+
             secondary_img = Assembler.create_image(
-                (width, sec_block_size),
-                "white",
+                transparent_background,
                 text["secondary"],
                 secondary_font,
-                style_dict["secondary_font_color"],
+                colorDict["secondary"],
+                padding=Assembler.calc_text_size(
+                    font_px=int(int(sizeDict["secondary"]) / 4),
+                    px_mult=context["mapDimensionsIn"]["map_pixel_multiplier"],
+                    dpi=settings.DPI,
+                ),
             )
             if verbose:
                 logging.info(
@@ -440,26 +499,27 @@ class Assembler:
         if text["coordinate"] and text["coordinate"] != "":
             logging.debug(f'coordinate text found: {text["coordinate"]}')
             coord_font_size = Assembler.calc_text_size(
-                font_px=style_dict["coordinate_font_size"],
+                font_px=int(sizeDict["coordinate"]),
                 px_mult=context["mapDimensionsIn"]["map_pixel_multiplier"],
                 dpi=settings.DPI,
             )
             coordinate_font = ImageFont.truetype(
-                map_font_path[style_dict["coordinate_font"]],
+                map_font_path[fontDict["coordinate"]],
                 coord_font_size,
             )
-            coord_block_size = Assembler.calc_text_size(
-                font_px=int(style_dict["coordinate_font_size"] / 2)
-                + style_dict["coordinate_font_size"],
-                px_mult=context["mapDimensionsIn"]["map_pixel_multiplier"],
-                dpi=settings.DPI,
-            )
+            # for concatenation
+            coordinate_img_width = coordinate_font.getsize(text["coordinate"])[0]
+
             coordinate_img = Assembler.create_image(
-                (width, coord_block_size),
-                "white",
+                transparent_background,
                 text["coordinate"],
                 coordinate_font,
-                style_dict["coordinate_font_color"],
+                colorDict["coordinate"],
+                padding=Assembler.calc_text_size(
+                    font_px=int(int(sizeDict["coordinate"]) / 4),
+                    px_mult=context["mapDimensionsIn"]["map_pixel_multiplier"],
+                    dpi=settings.DPI,
+                ),
             )
             if verbose:
                 logging.info(
@@ -475,6 +535,47 @@ class Assembler:
             )
             return
 
+        # Before concatenation. Make sure that the text blocks are the same size.
+        # If not, make them the same size. by adding padding of text block background color
+        maxWidth = max(primary_img_width, secondary_img_width, coordinate_img_width)
+        if primary_img and primary_img_width < maxWidth:
+            primary_img = Assembler.add_padding(
+                primary_img, maxWidth - primary_img_width, transparent_background
+            )
+            if verbose:
+                logging.info(
+                    f"saving primary text block to {settings.TEMP_TEXT_OUTPUT_FOLDER}"
+                )
+                primary_img.save(
+                    settings.TEMP_TEXT_OUTPUT_FOLDER + "primary-text-with-padding.png"
+                )
+
+        if secondary_img and secondary_img_width < maxWidth:
+            secondary_img = Assembler.add_padding(
+                secondary_img, maxWidth - secondary_img_width, transparent_background
+            )
+            if verbose:
+                logging.info(
+                    f"saving secondary text block to {settings.TEMP_TEXT_OUTPUT_FOLDER}"
+                )
+                secondary_img.save(
+                    settings.TEMP_TEXT_OUTPUT_FOLDER + "secondary-text-with-padding.png"
+                )
+
+        if coordinate_img and coordinate_img_width < maxWidth:
+            coordinate_img = Assembler.add_padding(
+                coordinate_img, maxWidth - coordinate_img_width, transparent_background
+            )
+            if verbose:
+                logging.info(
+                    f"saving coordinate text block to {settings.TEMP_TEXT_OUTPUT_FOLDER}"
+                )
+                coordinate_img.save(
+                    settings.TEMP_TEXT_OUTPUT_FOLDER
+                    + "coordinate-text-with-padding.png"
+                )
+
+        # Now Concatenate the text blocks of the same width
         final_img = None
         if primary_img is None:
             if secondary_img is None:
@@ -511,29 +612,68 @@ class Assembler:
             )
             final_img.save(settings.TEMP_TEXT_OUTPUT_FOLDER + "all-text.png")
 
-        # Add padding to text block image to match the style specifications: (block_inches * dpi)
-        final_width, final_height = final_img.size
-        padding_total = int(style_dict["block_inches"] * settings.DPI) - final_height
-
-        # Add padding to the text block image north and south image.
-        img_updown = ImageOps.expand(
-            final_img,
-            border=(0, int(padding_total / 2), 0, int(padding_total / 2)),
-            fill="white",
+        # Adding padding to text block
+        padding = Assembler.calc_text_size(
+            font_px=int(re.sub("[^0-9]", "", textBlockSpecs["padding"])),
+            px_mult=context["mapDimensionsIn"]["map_pixel_multiplier"],
+            dpi=settings.DPI,
         )
-        logging.debug(f"padding total: {padding_total}, final height: {final_height}")
 
-        # Add padding to south of image if there is left over space. (shouldnt be off by more than a pixel)
-        if padding_total % 2 != 0:
-            img_updown = ImageOps.expand(img_updown, border=(0, 0, 0, 1), fill="white")
-        logging.debug(f"final text block size: {img_updown.size}")
-
+        final_img = ImageOps.expand(
+            final_img,
+            border=(padding, padding, padding, padding),
+            fill=transparent_background,
+        )
         if verbose:
             logging.info(
                 f"saving final text block with padding to {settings.TEMP_TEXT_OUTPUT_FOLDER}"
             )
-            img_updown.save(settings.TEMP_TEXT_OUTPUT_FOLDER + "add-text-w-padding.png")
+            final_img.save(
+                settings.TEMP_TEXT_OUTPUT_FOLDER + "all-text-with-padding.png"
+            )
 
-        # Add text block to map
-        map_w_text_img = Assembler.concatenate_images_v(map_img, img_updown)
-        map_w_text_img.save(out_path)
+        # Add rounded corner. Draw rectangle with rounded corners and paste the text image on top of it.
+        radius = int(re.sub("[^0-9]", "", textBlockSpecs["rounded"]))
+        if radius > 0:
+            # radius = radius * context["mapDimensionsIn"]["map_pixel_multiplier"]
+            radius = Assembler.calc_text_size(
+                font_px=radius,
+                px_mult=context["mapDimensionsIn"]["map_pixel_multiplier"],
+                dpi=settings.DPI,
+            )
+            new_img_obj = Image.new("RGBA", final_img.size)
+            draw = ImageDraw.Draw(new_img_obj)
+            draw.rounded_rectangle(
+                (0, 0, final_img.size[0], final_img.size[1]),
+                radius,
+                fill=colorDict["background"],
+            )
+
+            # Paste the text image on top of the rounded rectangle
+            new_img_obj.paste(final_img, (0, 0), final_img)
+            if verbose:
+                logging.info(
+                    f"saving final text block with padding and rounded corners to {settings.TEMP_TEXT_OUTPUT_FOLDER}"
+                )
+                new_img_obj.save(
+                    settings.TEMP_TEXT_OUTPUT_FOLDER
+                    + "all-text-with-padding-rounded.png"
+                )
+            final_img = new_img_obj
+
+        # Paste the image on the map.
+        w, h = final_img.size
+        map_width, map_height = map_img.size
+        # text_block_y in inches
+        text_block_y = float(textBlockSpecs["spacing"]) * settings.DPI
+        paste_y = map_height - int(text_block_y + h)
+        paste_x = (map_width / 2) - (w / 2)
+
+        map_img.paste(final_img, (int(paste_x), int(paste_y)), final_img)
+        if verbose:
+            logging.info(
+                f"saving final map with text block to {settings.TEMP_TEXT_OUTPUT_FOLDER}"
+            )
+            map_img.save(settings.TEMP_TEXT_OUTPUT_FOLDER + "map-with-text.png")
+
+        map_img.save(out_path)

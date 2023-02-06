@@ -58,16 +58,16 @@ API_DICT = {
     "light-transit": {
         "id": "light-transit",
         "iconImg": "/whiteBlackSquareIcon.svg",
-        "url": "https://api.maptiler.com/maps/1ec3a490-b9a7-418e-b22b-26f45c463081/{z}/{x}/{y}@2x.png?key=ht4mIQlGHtGak0dQVtAU",
+        "url": "https://api.maptiler.com/maps/1ec3a490-b9a7-418e-b22b-26f45c463081/{z}/{x}/{y}@2x.png?key=fLxXsh3K0MP3y21i3bJs",
     },
     "dark-transit": {
         "id": "dark-transit",
         "iconImg": "/blackWhiteSquareIcon.svg",
-        "url": "https://api.maptiler.com/maps/265e1571-5b2a-47cf-bdf4-0f78abaefb47/{z}/{x}/{y}@2x.png?key=ht4mIQlGHtGak0dQVtAU",
+        "url": "https://api.maptiler.com/maps/265e1571-5b2a-47cf-bdf4-0f78abaefb47/{z}/{x}/{y}@2x.png?key=fLxXsh3K0MP3y21i3bJs",
     },
     "modern-light": {
         "id": "modern-light",
         "iconImg": "/modernLightIcon.svg",
-        "url": "https://api.maptiler.com/maps/b5849635-c4d4-4bb8-b7ea-78ccd9bcf89c/{z}/{x}/{y}@2x.png?key=ht4mIQlGHtGak0dQVtAU",
+        "url": "https://api.maptiler.com/maps/b5849635-c4d4-4bb8-b7ea-78ccd9bcf89c/{z}/{x}/{y}@2x.png?key=fLxXsh3K0MP3y21i3bJs",
     },
 }

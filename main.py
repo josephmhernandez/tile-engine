@@ -182,7 +182,6 @@ def run_tile_engine(context, verbose=False) -> int:
                 out_path=settings.IMAGE_FILE_NAME,
                 text=text,
                 frame_size=context["poster_dimension"],
-                style=context["styling"],
                 context=context,
                 verbose=verbose,
             )
@@ -193,29 +192,31 @@ def run_tile_engine(context, verbose=False) -> int:
         logging.critical(e, exc_info=True)
         return engine_status_codes.ASSEMBLER_ADD_TEXT_FAILURE
 
+    # No borders right now  We are doing flush maps.
+
     # Add map border
-    logging.info("adding border to map")
-    try:
-        Assembler.add_border(
-            borders=context["stylingSpecs"]["borders"],
-            input_path=settings.IMAGE_FILE_NAME,
-            output_path=settings.IMAGE_FILE_NAME,
-            hasText=context["hasText"],
-            verbose=verbose,
-        )
+    # logging.info("adding border to map")
+    # try:
+    #     Assembler.add_border(
+    #         borders=context["stylingSpecs"]["borders"],
+    #         input_path=settings.IMAGE_FILE_NAME,
+    #         output_path=settings.IMAGE_FILE_NAME,
+    #         hasText=context["hasText"],
+    #         verbose=verbose,
+    #     )
 
-        # if context["hasText"] == False:
-        #     Assembler.add_border(
-        #         borders=context["stylingSpecs"]["borders"],
-        #         input_path=settings.IMAGE_FILE_NAME,
-        #         output_path=settings.IMAGE_FILE_NAME,
-        #         verbose=verbose,
-        #     )
+    #     # if context["hasText"] == False:
+    #     #     Assembler.add_border(
+    #     #         borders=context["stylingSpecs"]["borders"],
+    #     #         input_path=settings.IMAGE_FILE_NAME,
+    #     #         output_path=settings.IMAGE_FILE_NAME,
+    #     #         verbose=verbose,
+    #     #     )
 
-    except Exception as e:
-        logging.error("Assembler returned an error")
-        logging.critical(e, exc_info=True)
-        return engine_status_codes.ASSEMBLER_ADD_BORDER_FAILURE
+    # except Exception as e:
+    #     logging.error("Assembler returned an error")
+    #     logging.critical(e, exc_info=True)
+    #     return engine_status_codes.ASSEMBLER_ADD_BORDER_FAILURE
 
     logging.info("Tile engine completed successfully")
     return engine_status_codes.ENGINE_SUCCESS
