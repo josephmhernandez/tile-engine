@@ -2,6 +2,8 @@ from unicodedata import decimal
 from src.models.coord import Coord
 import decimal
 import numpy
+import mercantile
+import logging
 
 
 class Bbox:
@@ -74,10 +76,20 @@ class Bbox:
 
         return between_lat and between_lon
 
-    def get_total_x_length(self) -> decimal.Decimal:
-        total_x_degree = abs(self.top_left.lon - self.bottom_right.lon)
-        return total_x_degree
+    def get_dimensions_web_meractor(self) -> tuple:
+        # Project longitude coordinate to web mercator and calculate the distance
+        tl_x, tl_y = mercantile.xy(self.top_left.lon, self.top_left.lat)
+        br_x, br_y = mercantile.xy(self.bottom_right.lon, self.bottom_right.lat)
 
-    def get_total_y_length(self) -> decimal.Decimal:
-        total_y_degree = abs(self.top_left.lat - self.bottom_right.lat)
-        return total_y_degree
+        total_x_degree = abs(tl_x - br_x)
+        total_y_degree = abs(tl_y - br_y)
+
+        logging.info("total_x_degree: " + str(total_x_degree))
+        logging.info("total_y_degree: " + str(total_y_degree))
+        logging.info("the ratio of these should be the same as the poster length...")
+        if total_x_degree < total_y_degree:
+            logging.info("ratio: " + str(total_x_degree / total_y_degree))
+        else:
+            logging.info("ratio: " + str(total_y_degree / total_x_degree))
+
+        return total_x_degree, total_y_degree

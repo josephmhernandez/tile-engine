@@ -36,3 +36,6 @@ class Pin:
         self.digital_height = digital_height
         self.digital_width = digital_width
         self.color = color
+
+    def get_web_mercator(self) -> tuple:
+        return self.location.get_web_mercator()

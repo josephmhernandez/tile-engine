@@ -91,14 +91,17 @@ def get_pin_location(
     # Convert digital pin location (lon, lat) to print pin location (pixels)
 
     map_box = context["bbox"]
-
+    logging.info("map box: " + str(map_box))
     # Check point is in bbox.
     if not map_box.contains(pin.location):
         print(f"pin not in box id: {pin.id} location: {pin.location}")
 
-    # Calculate bbox total x & y value
-    total_x_bbox = map_box.get_total_x_length()
-    total_y_bbox = map_box.get_total_y_length()
+    # Calculate bbox total x & y values in web mercator units
+    total_x_bbox, total_y_bbox = map_box.get_dimensions_web_meractor()
+
+    logging.info("pin: " + str(pin))
+    logging.info("pin location: " + str(pin.location))
+    pin_x, pin_y = pin.location.get_web_mercator()
 
     # Calculate the x & y pixel location of pin on print image
     # trying to delete this
@@ -106,11 +109,15 @@ def get_pin_location(
     pf_width, pf_height = map_dim_pixel
 
     x_pixel_location = round(
-        abs(((pin.location.lon - map_box.top_left.lon) / total_x_bbox) * pf_width)
+        abs(((pin_x - map_box.top_left.get_web_mercator_x()) / total_x_bbox) * pf_width)
     )
+
     y_pixel_location = round(
-        abs(((pin.location.lat - map_box.top_left.lat) / total_y_bbox) * pf_height)
+        abs(
+            ((pin_y - map_box.top_left.get_web_mercator_y()) / total_y_bbox) * pf_height
+        )
     )
+
     logging.info("print width: " + str(pf_width) + " height: " + str(pf_height))
     logging.info("\tpixel location before pin image adjustment")
     logging.info(

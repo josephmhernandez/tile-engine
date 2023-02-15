@@ -99,29 +99,54 @@ class Assembler:
         tile_box = Bbox(tl_coord, br_coord)
 
         # Get difference between tile_box and map_box
-        diff_left_degree = abs(tile_box.top_left.lon - map_box.top_left.lon)
-        diff_top_degree = abs(tile_box.top_left.lat - map_box.top_left.lat)
-        diff_right_degree = abs(tile_box.bottom_right.lon - map_box.bottom_right.lon)
-        diff_bottom_degree = abs(tile_box.bottom_right.lat - map_box.bottom_right.lat)
+        # .... with web mercantile units
+        m_diff_left_degree = abs(
+            tile_box.top_left.get_web_mercator_x()
+            - map_box.top_left.get_web_mercator_x()
+        )
+        m_diff_top_degree = abs(
+            tile_box.top_left.get_web_mercator_y()
+            - map_box.top_left.get_web_mercator_y()
+        )
+        m_diff_right_degree = abs(
+            tile_box.bottom_right.get_web_mercator_x()
+            - map_box.bottom_right.get_web_mercator_x()
+        )
+        m_diff_bottom_degree = abs(
+            tile_box.bottom_right.get_web_mercator_y()
+            - map_box.bottom_right.get_web_mercator_y()
+        )
 
         # Calculate percent change of diff and convert to pixels
-        total_x_degree = abs(tile_box.top_left.lon - tile_box.bottom_right.lon)
-        total_y_degree = abs(tile_box.top_left.lat - tile_box.bottom_right.lat)
+        # .... with web mercantile units
+        m_total_x_degree = abs(
+            tile_box.top_left.get_web_mercator_x()
+            - tile_box.bottom_right.get_web_mercator_x()
+        )
+        m_total_y_degree = abs(
+            tile_box.top_left.get_web_mercator_y()
+            - tile_box.bottom_right.get_web_mercator_y()
+        )
 
         # Calculate pixel change
-        pixel_diff_left = round((diff_left_degree / total_x_degree) * img.width)
-        pixel_diff_right = round((diff_right_degree / total_x_degree) * img.width)
-        pixel_diff_top = round((diff_top_degree / total_y_degree) * img.height)
-        pixel_diff_bottom = round((diff_bottom_degree / total_y_degree) * img.height)
+        # .... with web mercantile units
+        m_pixel_diff_left = round((m_diff_left_degree / m_total_x_degree) * img.width)
+        m_pixel_diff_right = round((m_diff_right_degree / m_total_x_degree) * img.width)
+        m_pixel_diff_top = round((m_diff_top_degree / m_total_y_degree) * img.height)
+        m_pixel_diff_bottom = round(
+            (m_diff_bottom_degree / m_total_y_degree) * img.height
+        )
 
         # Crop Image. Save as output_path
-        crop_payload = (
-            0 + pixel_diff_left,
-            0 + pixel_diff_top,
-            img.width - pixel_diff_right,
-            img.height - pixel_diff_bottom,
+        # ... with web mercantile units
+        m_crop_payload = (
+            0 + m_pixel_diff_left,
+            0 + m_pixel_diff_top,
+            img.width - m_pixel_diff_right,
+            img.height - m_pixel_diff_bottom,
         )
-        im1 = img.crop(crop_payload)
+
+        im1 = img.crop(m_crop_payload)
 
         logging.info("Save cropped image to " + output_path)
         if verbose:
@@ -140,7 +165,7 @@ class Assembler:
     ) -> None:
         # Input map path and pin DTO
         # Save map to output location with pin on map
-        logging.info(f"map context: {context}")
+        # logging.info(f"map context: {context}")
         # Open image
         map_img = Image.open(input_path)
 
