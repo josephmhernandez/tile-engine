@@ -76,20 +76,6 @@ class Bbox:
 
         return between_lat and between_lon
 
-    # def get_total_x_length(self) -> decimal.Decimal:
-    #     # Project longitude coordinate to web mercator and calculate the distance
-
-    #     print("top_left.lon: ", self.top_left.lon)
-    #     print("bottom_right.lon: ", self.bottom_right.lon)
-    #     total_x_degree = self.top_left.lon - self.bottom_right.lon
-    #     return total_x_degree
-
-    # def get_total_y_length(self) -> decimal.Decimal:
-    #     print("top_left.lat: ", self.top_left.lat)
-    #     print("bottom_right.lat: ", self.bottom_right.lat)
-    #     total_y_degree = abs(self.top_left.lat - self.bottom_right.lat)
-    #     return total_y_degree
-
     def get_dimensions_web_meractor(self) -> tuple:
         # Project longitude coordinate to web mercator and calculate the distance
         tl_x, tl_y = mercantile.xy(self.top_left.lon, self.top_left.lat)

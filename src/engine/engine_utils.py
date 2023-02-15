@@ -111,18 +111,8 @@ def get_pin_location(
     x_pixel_location = round(
         abs(((pin_x - map_box.top_left.get_web_mercator_x()) / total_x_bbox) * pf_width)
     )
-    print("this is being rounded")
-    print(
-        abs(((pin_x - map_box.top_left.get_web_mercator_x()) / total_x_bbox) * pf_width)
-    )
 
     y_pixel_location = round(
-        abs(
-            ((pin_y - map_box.top_left.get_web_mercator_y()) / total_y_bbox) * pf_height
-        )
-    )
-    print("this is being rounded")
-    print(
         abs(
             ((pin_y - map_box.top_left.get_web_mercator_y()) / total_y_bbox) * pf_height
         )
