@@ -70,4 +70,14 @@ API_DICT = {
         "iconImg": "/modernLightIcon.svg",
         "url": "https://api.maptiler.com/maps/b5849635-c4d4-4bb8-b7ea-78ccd9bcf89c/{z}/{x}/{y}@2x.png?key=fLxXsh3K0MP3y21i3bJs",
     },
+    "city-lights": {
+        "id": "city-lights",
+        "iconImg": "/city-lights.png",
+        "url": "https://api.maptiler.com/maps/70207988-ec48-4dce-8172-230ff9375b7d/{z}/{x}/{y}@2x.png?key=fLxXsh3K0MP3y21i3bJs",
+    },
+    "ocean-tan": {
+        "id": "ocean-tan",
+        "iconImg": "/tan-ocean.png",
+        "url": "https://api.maptiler.com/maps/cd852295-1a11-4a53-a22b-995b2ded0e62/{z}/{x}/{y}@2x.png?key=fLxXsh3K0MP3y21i3bJs",
+    },
 }

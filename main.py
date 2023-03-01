@@ -40,6 +40,8 @@ import settings
 import src.engine.engine_utils as engine_utils
 import PIL.Image
 
+import PIL.Image as Image
+
 
 def run_tile_engine(context, verbose=False) -> int:
     """
@@ -192,6 +194,11 @@ def run_tile_engine(context, verbose=False) -> int:
         logging.critical(e, exc_info=True)
         return engine_status_codes.ASSEMBLER_ADD_TEXT_FAILURE
 
+    # We want to save the map in an EPS format.
+    im = Image.open(settings.IMAGE_FILE_NAME)
+    fig = im.convert("RGB")
+    new_file_name = settings.IMAGE_FILE_NAME.replace(".png", ".eps")
+    fig.save(new_file_name, lossless=True)
     # No borders right now  We are doing flush maps.
 
     # Add map border
