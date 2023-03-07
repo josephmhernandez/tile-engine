@@ -94,7 +94,8 @@ def get_pin_location(
     logging.info("map box: " + str(map_box))
     # Check point is in bbox.
     if not map_box.contains(pin.location):
-        print(f"pin not in box id: {pin.id} location: {pin.location}")
+        logging.info("pin not in box")
+        logging.info(f"pin not in box location: {pin.location} icon: {pin.icon}")
 
     # Calculate bbox total x & y values in web mercator units
     total_x_bbox, total_y_bbox = map_box.get_dimensions_web_meractor()

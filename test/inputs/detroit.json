@@ -2,28 +2,28 @@
   {
     "pinList": [
       {
-        "id": "507debd7-138c-4f21-a758-7ac7a0bb30c0",
-        "size": 50,
+        "id": "8a61c821-a90f-4125-9e0a-5d98e5dae9ef",
+        "size": 40,
         "style": "heart-black-white",
-        "position": { "lat": 32.87594696963274, "lng": -97.17188358306886 }
+        "position": { "lat": 42.343320316410804, "lng": -83.01818847656251 }
       }
     ],
-    "center": [32.8763001, -97.17224910000002],
-    "zoom": 13,
-    "orientation": "portrait",
-    "textPrimary": "4510 Mill Pond Ct",
-    "textSecondary": "Colleyville, TX, USA",
-    "textCoordinates": "N 32°52'33.41\" W 97°10'18.78\"",
+    "center": [42.475135679579964, -82.81356811523438],
+    "zoom": 10,
+    "orientation": "landscape",
+    "textPrimary": "Detroit",
+    "textSecondary": "MI, USA",
+    "textCoordinates": "N 42°20'35.95\" W 83°1'5.48\"",
     "styling": "basic",
     "size": "_24_36",
     "tileLayer": "modern-light",
-    "bbox": "{\"_southWest\":{\"lat\":32.81656533637882,\"lng\":-97.21956253051759},\"_northEast\":{\"lat\":32.93593717736373,\"lng\":-97.12480545043947}}",
+    "bbox": "{\"_southWest\":{\"lat\":42.194951362905265,\"lng\":-83.38211059570314},\"_northEast\":{\"lat\":42.75407118101084,\"lng\":-82.24502563476564}}",
     "tileZoomOffset": "2",
     "quantity": 1,
-    "description": "Map of 4510 Mill Pond Ct",
-    "id": "c3e6305d-9de5-4677-a72e-df36be398b88",
+    "description": "Map of Detroit",
+    "id": "61966739-127f-4782-b42d-81642f212e58",
     "name": "Personalized Map",
-    "unitPrice": 59.99,
+    "unitPrice": 699,
     "lineItemId": [
       {
         "id": "item_7RyWOwmK5nEa2V",
@@ -34,16 +34,16 @@
         "permalink": "qNG91W",
         "quantity": 1,
         "price": {
-          "raw": 59.99,
-          "formatted": "59.99",
-          "formatted_with_symbol": "$59.99",
-          "formatted_with_code": "59.99 USD"
+          "raw": 699,
+          "formatted": "699.00",
+          "formatted_with_symbol": "$699.00",
+          "formatted_with_code": "699.00 USD"
         },
         "line_total": {
-          "raw": 59.99,
-          "formatted": "59.99",
-          "formatted_with_symbol": "$59.99",
-          "formatted_with_code": "59.99 USD"
+          "raw": 699,
+          "formatted": "699.00",
+          "formatted_with_symbol": "$699.00",
+          "formatted_with_code": "699.00 USD"
         },
         "is_valid": true,
         "product_meta": [],
@@ -94,8 +94,8 @@
       }
     },
     "mapDimensionsIn": {
-      "map_width": 24,
-      "map_height": 36,
+      "map_width": 36,
+      "map_height": 24,
       "map_pixel_multiplier": 23
     }
   }

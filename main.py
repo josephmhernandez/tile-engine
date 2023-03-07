@@ -197,8 +197,15 @@ def run_tile_engine(context, verbose=False) -> int:
     # We want to save the map in an EPS format.
     im = Image.open(settings.IMAGE_FILE_NAME)
     fig = im.convert("RGB")
+
+    # Convert to CMYK
+    jpg = fig.convert("CMYK")
+    jpg_file_name = settings.IMAGE_FILE_NAME.replace(".png", ".jpg")
+    jpg.save(jpg_file_name)
+
     new_file_name = settings.IMAGE_FILE_NAME.replace(".png", ".eps")
     fig.save(new_file_name, lossless=True)
+
     # No borders right now  We are doing flush maps.
 
     # Add map border
@@ -273,7 +280,7 @@ if __name__ == "__main__":
     """
     print("starting...")
     try:
-        code = main(sys.argv, verbose=True)
+        code = main(sys.argv, verbose=False)
         logging.info("finished with Engine result code " + str(code))
     except Exception as e:
         # Maybe this will always run?
