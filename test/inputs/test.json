@@ -1,0 +1,114 @@
+[
+  {
+    "pinList": [
+      {
+        "id": "7b83e881-907f-4376-ab7e-7581ed871750",
+        "size": 40,
+        "style": "heart-white-black",
+        "position": { "lat": 37.78808138412046, "lng": -121.92489624023439 }
+      },
+      {
+        "id": "926dcf9f-0db6-4e3e-a731-05fb4c3d149d",
+        "size": 90,
+        "style": "heart-white-black",
+        "position": { "lat": 37.62837193983584, "lng": -122.49206542968751 }
+      },
+      {
+        "id": "493090bf-1ab1-4b41-ad18-f688b571ae81",
+        "size": 90,
+        "style": "heart-white-black",
+        "position": { "lat": 32.7713986288032, "lng": -117.25296020507814 }
+      }
+    ],
+    "center": [32.7702439075344, -117.21965789794923],
+    "zoom": 12,
+    "orientation": "portrait",
+    "textPrimary": "Mission Beach - San Diego",
+    "textSecondary": "N 32°46'12.88\" W 117°13'10.77\"",
+    "textCoordinates": "",
+    "styling": "basic",
+    "size": "_24_36",
+    "tileLayer": "dark-transit",
+    "bbox": "{\"_southWest\":{\"lat\":32.650649292775554,\"lng\":-117.31441497802736},\"_northEast\":{\"lat\":32.889678044426105,\"lng\":-117.12490081787111}}",
+    "tileZoomOffset": 2,
+    "quantity": 1,
+    "description": "Map of Mission Beach - San Diego",
+    "id": "bcc580fa-7afc-4cf5-8f67-2d3f26c8659d",
+    "name": "Personalized Map",
+    "unitPrice": 9,
+    "lineItemId": [
+      {
+        "id": "item_7RyWOwmK5nEa2V",
+        "product_id": "prod_VKXmwDy717orgD",
+        "name": "Personalized Map",
+        "product_name": "Personalized Map",
+        "sku": null,
+        "permalink": "qNG91W",
+        "quantity": 1,
+        "price": {
+          "raw": 499,
+          "formatted": "499.00",
+          "formatted_with_symbol": "$499.00",
+          "formatted_with_code": "499.00 USD"
+        },
+        "line_total": {
+          "raw": 499,
+          "formatted": "499.00",
+          "formatted_with_symbol": "$499.00",
+          "formatted_with_code": "499.00 USD"
+        },
+        "is_valid": true,
+        "product_meta": [],
+        "selected_options": [],
+        "variant": null,
+        "image": {
+          "id": "ast_yA6nldR94goEWb",
+          "url": "https://cdn.chec.io/merchants/47490/assets/CjaynbQmf8IB1ml3|text-close-up.jpg",
+          "description": null,
+          "is_image": true,
+          "filename": "text-close-up.jpg",
+          "file_size": 356984,
+          "file_extension": "jpg",
+          "image_dimensions": { "width": 2000, "height": 1000 },
+          "meta": [],
+          "created_at": 1679717075,
+          "updated_at": 1679717076
+        },
+        "tax": null
+      }
+    ],
+    "isTransparentTextBlock": true,
+    "styling_specs": {},
+    "text_styling_specs": {
+      "id": "dark-transit",
+      "iconImg": "/blackWhiteSquareIcon.svg",
+      "url": "https://api.maptiler.com/maps/265e1571-5b2a-47cf-bdf4-0f78abaefb47/{z}/{x}/{y}.png?key=fLxXsh3K0MP3y21i3bJs",
+      "text": {
+        "fontFamily": {
+          "primary": "Semplicita",
+          "secondary": "Semplicita",
+          "coordinate": "Semplicita"
+        },
+        "size": { "primary": "24", "secondary": "12", "coordinate": "8" },
+        "color": {
+          "background": "#FFFFFF",
+          "primary": "#000000",
+          "secondary": "#000000",
+          "coordinate": "#000000"
+        },
+        "color_transparent": {
+          "background": "#0000",
+          "primary": "#FFFFFF",
+          "secondary": "#FFFFFF",
+          "coordinate": "#FFFFFF"
+        },
+        "textBlock": { "padding": "8px", "rounded": "8px", "spacing": "1" }
+      }
+    },
+    "mapDimensionsIn": {
+      "map_width": 24,
+      "map_height": 36,
+      "map_pixel_multiplier": 23
+    }
+  }
+]

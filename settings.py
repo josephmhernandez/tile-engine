@@ -24,4 +24,4 @@ TEMP_RESIZED_OUTPUT = TEMP_OUTPUT_FOLDER + "main-resized.png"
 
 # Controls the Editing of the Map / Poster. Need the map resized before we add
 #   text / borders / effects so these things are not distored.
-DPI = 300
+DPI = 92
