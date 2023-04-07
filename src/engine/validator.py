@@ -29,7 +29,7 @@ def validate_schema(input_payload_dict: dict):
                 # TO DO: Add validation to pinList items
                 "pinList": And(Use(list)),
                 # TO DO: Add validation to styling items
-                "styling_specs": And(Use(dict)),
+                # "styling_specs": And(Use(dict)),
                 "tileZoomOffset": And(Use(int)),
                 # TO DO: Add validation to mapDimensionsIn items
                 "mapDimensionsIn": And(Use(dict)),
@@ -76,20 +76,36 @@ def validate_json_attributes(input_payload):
         context["textSecondary"] = input_payload["textSecondary"]
         context["textCoordinates"] = input_payload["textCoordinates"]
         context["tileLayer"] = input_payload["tileLayer"]
-        context["stylingSpecs"] = input_payload["styling_specs"]
+        # context["stylingSpecs"] = input_payload["styling_specs"]
         context["styling"] = input_payload["styling"]
         context["tileZoomOffset"] = int(input_payload["tileZoomOffset"])
         context["mapDimensionsIn"] = input_payload["mapDimensionsIn"]
         context["hasText"] = ValueValidator.extract_valid_text_flag(input_payload)
         context["bbox"] = ValueValidator.extract_valid_bbox_value(input_payload["bbox"])
-        context["zoom"] = (
-            ValueValidator.extract_valid_zoom_value(input_payload["zoom"])
-            + context["tileZoomOffset"]
-        )
+
         context["textStylingSpecs"] = input_payload["text_styling_specs"]
         context["isTransparentTextBlock"] = input_payload["isTransparentTextBlock"]
         # TO DO: validate each pin in payload
         context["pins"] = input_payload["pinList"]
+        context["size"] = input_payload["size"]
+
+        if "demo" in context["size"]:
+            context["is_mobile"] = True
+        else:
+            context["is_mobile"] = False
+
+        if context["is_mobile"]:
+            logging.info(
+                "BAD CODING: is_mobile is true so we automaticlly set the tileZoomOffset to 4. We will also be setting the mutiplier to 23 before we add text to the map"
+            )
+            context["tileZoomOffset"] = 4
+
+        logging.info("value of tileZoomOffset: " + str(context["tileZoomOffset"]))
+
+        context["zoom"] = (
+            ValueValidator.extract_valid_zoom_value(input_payload["zoom"])
+            + context["tileZoomOffset"]
+        )
 
         # TO DO: add map_style to payload from commercejs (UI)
         # if "map_style" not in input_payload:

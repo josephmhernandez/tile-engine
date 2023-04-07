@@ -62,6 +62,14 @@ def run_tile_engine(context, verbose=False) -> int:
     engine_utils.create_empty_folder(settings.TEMP_TEXT_OUTPUT_FOLDER)
     engine_utils.create_empty_folder(settings.TEMP_PIN_OUTPUT_FOLDER)
     engine_utils.create_empty_folder(settings.TEMP_TILE_IMAGE_FOLDER)
+
+    # Mobile Check?
+    logging.info("running mobile check...")
+    if context["is_mobile"]:
+        logging.info("BAD CODING: Is Mobile is True")
+    # Multiplier for text has to be 23.
+    # Zoom Offset for Downloader has to be 4.
+
     # Run Downloader
     try:
         logging.info("Running Downloader...")
@@ -179,6 +187,14 @@ def run_tile_engine(context, verbose=False) -> int:
                 "coordinate": context["textCoordinates"],
             }
             logging.info(f"Adding text {text} to map image")
+
+            # For Text rendering ->
+            if context["is_mobile"]:
+                logging.info(
+                    "BAD CODING: is_mobile is true so we are setting the pixel multiplier to 23 to add the text"
+                )
+                context["mapDimensionsIn"]["map_pixel_multiplier"] = 23
+
             Assembler.add_text(
                 img_path=settings.IMAGE_FILE_NAME,
                 out_path=settings.IMAGE_FILE_NAME,
