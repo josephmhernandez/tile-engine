@@ -12,6 +12,7 @@ from doctest import OutputChecker
 from multiprocessing.dummy import Array
 from optparse import Option
 import sys
+from src.engine.transparency_transformer import TransparencyTransformer
 
 from src.models.value_validator import ValueValidator
 import settings
@@ -41,6 +42,8 @@ import src.engine.engine_utils as engine_utils
 import PIL.Image
 
 import PIL.Image as Image
+
+from src.style_constants import TRANSPARENT_TILE_LAYERS
 
 
 def run_tile_engine(context, verbose=False) -> int:
@@ -155,6 +158,34 @@ def run_tile_engine(context, verbose=False) -> int:
         logging.critical(e, exc_info=True)
         return engine_status_codes.MAIN_RESIZE_FAILURE
 
+    # Is the map transparent? Are we adding a Bg image?
+    logging.info("Adding background image to map")
+    try:
+        if context["bgImgCode"]:
+            logging.info("Adding background image to map: " + str(context["bgImgCode"]))
+            logging.info("Checking that the tile layer is ideal for transparency")
+
+            if context["tileLayer"] not in TRANSPARENT_TILE_LAYERS:
+                logging.error(
+                    "Tile layer is not ideal for transparency despite having an image code. Continuing without background image"
+                )
+                # raise Exception(
+                #     "Tile layer is not ideal for transparency but there is a bg image code. tileLayer: "
+                #     + str(context["tileLayer"])
+                #     + " bgImgCode: "
+                #     + str(context["bgImgCode"])
+                # )
+            else:
+                TransparencyTransformer.add_background_and_transparency(
+                    settings.IMAGE_FILE_NAME,
+                    context["bgImgCode"],
+                    output_path=settings.IMAGE_FILE_NAME,
+                )
+    except Exception as e:
+        logging.error("TransparencyTransformer returned an error")
+        logging.critical(e, exc_info=True)
+        return engine_status_codes.TRANSPARENCY_TRANSFORMER_FAILURE
+
     # Dont remove. Will use this on other map styles in the future
     # Add map style
     # logging.info("adding style to the map " + str(context["map_style"]))
@@ -209,6 +240,20 @@ def run_tile_engine(context, verbose=False) -> int:
         logging.error("Assembler returned an error")
         logging.critical(e, exc_info=True)
         return engine_status_codes.ASSEMBLER_ADD_TEXT_FAILURE
+
+    # Add white background to the map.
+    logging.info("Adding white background to the image")
+    try:
+        TransparencyTransformer.add_white_background(
+            input_path=settings.IMAGE_FILE_NAME,
+            output_path=settings.IMAGE_FILE_NAME,
+        )
+    except Exception as e:
+        logging.error(
+            "TransparencyTransformer returned an error while adding a white background to the image"
+        )
+        logging.critical(e, exc_info=True)
+        return engine_status_codes.TRANSPARENCY_TRANSFORMER_FAILURE
 
     # We want to save the map in an EPS format.
     im = Image.open(settings.IMAGE_FILE_NAME)

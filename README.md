@@ -27,6 +27,11 @@ pipenv run python3 main.py test/inputs/
 RUN WITH LOGS TO CONSOLE:
 Comment out line in logging.basicCongig in main.py
 
+# Local Configuraiton Changes
+
+Download images zip folder
+Change BG_FOLDER_PATH (src/constants/bg_images.py) to the location locally of the unzipped bg images
+
 # Pipenv guide: https://realpython.com/pipenv-guide/
 
 # Organize ouput files:
@@ -39,9 +44,10 @@ Steps:
 2. Assembler - assemble-tiles to one image
 3. Assembler - crop-image to the bbox
 4. Assembler - add-pin to the image
-5. Assembler - add-style to the map image (transparency etc.)
-6. Assembler - add-text to the image
-7. Assembler - add-border to the image
+5. TransparencyTransformer - Adds transparency to the tile layer. Adds image as background.
+6. Assembler - add-style to the map image (transparency etc.)
+7. Assembler - add-text to the image
+8. Assembler - add-border to the image
 
 TO DO List:
 

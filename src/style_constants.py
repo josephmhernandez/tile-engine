@@ -80,4 +80,12 @@ API_DICT = {
         "iconImg": "/tan-ocean.png",
         "url": "https://api.maptiler.com/maps/cd852295-1a11-4a53-a22b-995b2ded0e62/{z}/{x}/{y}@2x.png?key=fLxXsh3K0MP3y21i3bJs",
     },
+    "flag-back": {
+        "id": "flag-back",
+        "iconImg": "/tan-ocean.png",
+        "url": "https://api.maptiler.com/maps/11489910-a9d8-4e58-a989-e00a490cf934/{z}/{x}/{y}@2x.jpg?key=fLxXsh3K0MP3y21i3bJs",
+    },
 }
+
+# List of layers desigend for transparency additions to background images
+TRANSPARENT_TILE_LAYERS = ["flag-back"]
