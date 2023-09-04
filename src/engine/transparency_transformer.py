@@ -2,7 +2,6 @@ from PIL import Image, ImageOps
 import logging
 
 from src.constants.bg_images import BG_FOLDER_PATH, BG_IMG_URL_MAP
-from src.engine import engine_status_codes
 
 # Settings for TransparencyTransformer
 BG_LOCATION_DEFAULT = "local"

@@ -186,9 +186,6 @@ def run_tile_engine(context, verbose=False) -> int:
         logging.critical(e, exc_info=True)
         return engine_status_codes.TRANSPARENCY_TRANSFORMER_FAILURE
 
-        # IF img code. We want to create an image from the img code svg the same size as the maps.
-        # We want to prep the image for the transparency effect before pasting it on the map.
-
     # Dont remove. Will use this on other map styles in the future
     # Add map style
     # logging.info("adding style to the map " + str(context["map_style"]))
