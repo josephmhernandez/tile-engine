@@ -34,9 +34,10 @@
     "textCoordinates": "",
     "styling": "basic",
     "size": "_24_36",
-    "tileLayer": "dark-transit",
+    "tileLayer": "flag-back",
     "bbox": "{\"_southWest\":{\"lat\":27.459539332717906,\"lng\":-100.689697265625},\"_northEast\":{\"lat\":35.21869749632885,\"lng\":-94.625244140625}}",
     "tileZoomOffset": "2",
+    "bgImgCode": "usa",
     "quantity": 1,
     "description": "Map of Dallas, Texas ",
     "id": "048cfcd6-fe6a-4a06-955d-587268f3c03f",
@@ -84,11 +85,11 @@
       }
     ],
     "isTransparentTextBlock": true,
-    "styling_specs": {},
     "text_styling_specs": {
       "id": "dark-transit",
       "iconImg": "/blackWhiteSquareIcon.svg",
       "url": "https://api.maptiler.com/maps/265e1571-5b2a-47cf-bdf4-0f78abaefb47/{z}/{x}/{y}.png?key=fLxXsh3K0MP3y21i3bJs",
+      "isOverlay": true,
       "text": {
         "fontFamily": {
           "primary": "Semplicita",

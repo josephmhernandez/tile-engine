@@ -45,6 +45,7 @@ def validate_schema(input_payload_dict: dict):
                 Optional("quantity"): And(Use(int)),
                 Optional("unitPrice"): And(Use(float)),
                 Optional("location"): And(Use(str)),
+                Optional("bgImgCode"): And(Use(str)),
             }
         ]
     )
@@ -85,6 +86,14 @@ def validate_json_attributes(input_payload):
 
         context["textStylingSpecs"] = input_payload["text_styling_specs"]
         context["isTransparentTextBlock"] = input_payload["isTransparentTextBlock"]
+        # bg image code.
+        logging.info("looking for bgImgCode in input_payload")
+        if "bgImgCode" in input_payload:
+            context["bgImgCode"] = input_payload["bgImgCode"]
+        else:
+            context["bgImgCode"] = ""
+        logging.info("bgImgCode: " + str(context["bgImgCode"]))
+
         # TO DO: validate each pin in payload
         context["pins"] = input_payload["pinList"]
         context["size"] = input_payload["size"]
