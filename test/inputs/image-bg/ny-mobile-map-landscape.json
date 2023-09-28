@@ -2,26 +2,34 @@
   {
     "pinList": [
       {
-        "id": "96731603-42ac-4d7c-ab3d-bdc2d29a2275",
-        "size": 35,
-        "style": "diamond-black-white",
-        "position": { "lat": 48.857938768171536, "lng": 2.295455932617188 }
+        "id": "955e5877-1731-44ee-8306-36107a43025e",
+        "size": 40,
+        "style": "heart-black-white",
+        "position": { "lat": 40.67794079953362, "lng": -73.82630109786989 }
+      },
+      {
+        "id": "7e3d79ea-0428-4aa4-bb59-02792bb0e0b6",
+        "size": 25,
+        "style": "heart-black-white",
+        "position": { "lat": 40.76646095035229, "lng": -73.98882150650026 }
       }
     ],
-    "center": [48.84912860497674, 2.330131530761719],
-    "zoom": 11,
+    "location": "",
+    "center": [40.73061, -73.935242],
+    "zoom": 10,
     "orientation": "landscape",
-    "textPrimary": "Paris",
-    "textSecondary": "France",
-    "textCoordinates": "N 48°51'28.58\" E 2°17'43.64\"",
+    "textPrimary": "",
+    "textSecondary": "",
+    "textCoordinates": "N 40°40'40.59\" W 73°49'34.68\"",
     "styling": "basic",
-    "size": "_24_36",
-    "tileLayer": "modern-light",
-    "bbox": "{\"_southWest\":{\"lat\":48.72403812433608,\"lng\":2.0462036132812504},\"_northEast\":{\"lat\":48.97345664363535,\"lng\":2.6147460937500004}}",
-    "tileZoomOffset": 2,
+    "size": "_24_36_demo",
+    "tileLayer": "flag-back",
+    "bbox": "{\"_southWest\":{\"lat\":40.61812224225511,\"lng\":-74.15771484375001},\"_northEast\":{\"lat\":40.84290487729676,\"lng\":-73.71276855468751}}",
+    "tileZoomOffset": 3,
+    "bgImgCode": "usa",
     "quantity": 1,
-    "description": "Map of Paris",
-    "id": "aa99e538-3961-4d9b-9d02-8d918c554b01",
+    "description": "Map near 37 Railroad Ave, Queens, NY 11101, USA",
+    "id": "3640acf0-05f6-4cdf-aca4-677573961857",
     "name": "Personalized Map",
     "unitPrice": 499,
     "lineItemId": [
@@ -65,11 +73,12 @@
         "tax": null
       }
     ],
-    "isTransparentTextBlock": true,
+    "isTransparentTextBlock": false,
     "text_styling_specs": {
-      "id": "modern-light",
-      "iconImg": "/modernLightIcon.svg",
-      "url": "https://api.maptiler.com/maps/b5849635-c4d4-4bb8-b7ea-78ccd9bcf89c/{z}/{x}/{y}.png?key=fLxXsh3K0MP3y21i3bJs",
+      "id": "flag-back",
+      "iconImg": "/tan-ocean.png",
+      "url": "https://api.maptiler.com/maps/11489910-a9d8-4e58-a989-e00a490cf934/{z}/{x}/{y}.jpg?key=fLxXsh3K0MP3y21i3bJs",
+      "isOverlay": true,
       "text": {
         "fontFamily": {
           "primary": "Semplicita",
@@ -77,6 +86,7 @@
           "coordinate": "Semplicita"
         },
         "size": { "primary": "24", "secondary": "12", "coordinate": "8" },
+        "size_demo": { "primary": "8", "secondary": "4", "coordinate": "3" },
         "color": {
           "background": "#000000",
           "primary": "#FFFFFF",
@@ -89,13 +99,18 @@
           "secondary": "#000000",
           "coordinate": "#000000"
         },
-        "textBlock": { "padding": "8px", "rounded": "3px", "spacing": "1" }
+        "textBlock": { "padding": "8px", "rounded": "8px", "spacing": "1" },
+        "text_block_demo": {
+          "padding": "1px",
+          "rounded": "3px",
+          "spacing": "1"
+        }
       }
     },
     "mapDimensionsIn": {
       "map_width": 36,
       "map_height": 24,
-      "map_pixel_multiplier": 23
+      "map_pixel_multiplier": 9
     }
   }
 ]
