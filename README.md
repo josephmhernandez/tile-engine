@@ -1,5 +1,7 @@
 # tile-engine
 
+pipenv run python3 main.py test/inputs/seattle-lights.json
+
 # Commands
 
 pipenv shell # Activate virtual environment

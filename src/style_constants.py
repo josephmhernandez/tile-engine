@@ -85,6 +85,21 @@ API_DICT = {
         "iconImg": "/tan-ocean.png",
         "url": "https://api.maptiler.com/maps/11489910-a9d8-4e58-a989-e00a490cf934/{z}/{x}/{y}@2x.jpg?key=fLxXsh3K0MP3y21i3bJs",
     },
+    "eco": {
+        "id": "eco",
+        "iconImg": "/eco.png",
+        "url": "https://api.maptiler.com/maps/c84b46cc-9714-4db6-b48e-92cb5057019d/{z}/{x}/{y}@2x.png?key=fLxXsh3K0MP3y21i3bJs",
+    },
+    "blue-print": {
+        "id": "blue-print",
+        "iconImg": "/blue-print.png",
+        "url": "https://api.maptiler.com/maps/fc561f13-f2a7-4eb2-88bd-afc6f69f5c45/{z}/{x}/{y}@2x.png?key=fLxXsh3K0MP3y21i3bJs",
+    },
+    "ruby-routes": {
+        "id": "ruby-routes",
+        "iconImg": "/ruby-routes.png",
+        "url": "https://api.maptiler.com/maps/a0ab4f04-819d-425b-9a79-f8a32d92cae1/{z}/{x}/{y}@2x.png?key=fLxXsh3K0MP3y21i3bJs",
+    },
 }
 
 # List of layers desigend for transparency additions to background images
