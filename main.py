@@ -256,16 +256,16 @@ def run_tile_engine(context, verbose=False) -> int:
         return engine_status_codes.TRANSPARENCY_TRANSFORMER_FAILURE
 
     # We want to save the map in an EPS format.
-    im = Image.open(settings.IMAGE_FILE_NAME)
-    fig = im.convert("RGB")
+    # im = Image.open(settings.IMAGE_FILE_NAME)
+    # fig = im.convert("RGB")
 
     # Convert to CMYK
-    jpg = fig.convert("CMYK")
-    jpg_file_name = settings.IMAGE_FILE_NAME.replace(".png", ".jpg")
-    jpg.save(jpg_file_name)
+    # jpg = fig.convert("CMYK")
+    # jpg_file_name = settings.IMAGE_FILE_NAME.replace(".png", ".jpg")
+    # jpg.save(jpg_file_name)
 
-    new_file_name = settings.IMAGE_FILE_NAME.replace(".png", ".eps")
-    fig.save(new_file_name, lossless=True)
+    # new_file_name = settings.IMAGE_FILE_NAME.replace(".png", ".eps")
+    # fig.save(new_file_name, lossless=True)
 
     # No borders right now  We are doing flush maps.
 
@@ -313,16 +313,26 @@ def main(args, verbose=False) -> int:
         datefmt="%Y-%m-%d %H:%M:%S",
     )
 
+    # Loop through.
+
     # Validate payload
     logging.info("Validating payload...")
-    context = validate_payload(args)
+    all_context = validate_payload(args)
 
     # Run tile engine
     logging.info("Running tile engine...")
     # To change this output as a string you need to add a json convertor to Bbox and Coordinate and other DTOs that don't allow json.dump method on them.
-    logging.info(f"tile-engine context: {str(context)} ")
+    # logging.info(f"tile-engine context: {str(context)} ")
+    logging.info(f"tile-engine context: Running {len(all_context)} jobs")
     adjust_pil_settings()
-    engine_code = run_tile_engine(context, verbose=verbose)
+    for context in all_context:
+
+        engine_code = run_tile_engine(context, verbose=verbose)
+        if engine_code != engine_status_codes.ENGINE_SUCCESS:
+            logging.error(
+                f"Tile engine failed with status code {engine_code} for context {str(context)}"
+            )
+            return engine_code
     return engine_code
 
 

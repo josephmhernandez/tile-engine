@@ -138,3 +138,6 @@ src/tile_images/*
 test/.DS_Store
 
 .DS_Store
+
+#
+test/inputs/*

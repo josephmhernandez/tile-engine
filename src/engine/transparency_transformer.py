@@ -45,6 +45,9 @@ class TransparencyTransformer:
             logging.info("Rotating tile image")
             bg_img = bg_img.rotate(270, expand=True)
         # Ensure that tile image is the same size as bg image.
+        # Ensure that the ratio is the same
+        logging.info("Checking image sizes")
+
         if tile_img.size != bg_img.size:
             logging.error("WTF - the image sizes aren't the same")
             logging.error(
@@ -53,9 +56,10 @@ class TransparencyTransformer:
                 + " bg_img.size - "
                 + str(bg_img.size)
             )
-            raise Exception(
-                "[TransparencyTransformer: add_background_and_transparency] WTF - the image sizes aren't the same"
-            )
+            # raise Exception(
+            #     "[TransparencyTransformer: add_background_and_transparency] WTF - the image sizes aren't the same"
+            # )
+            bg_img = bg_img.resize(tile_img.size)
 
         bg_img.paste(tile_img, (0, 0), tile_img)
 

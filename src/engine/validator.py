@@ -63,95 +63,107 @@ def validate_schema(input_payload_dict: dict):
     return err_list
 
 
-def validate_json_attributes(input_payload):
-    logging.info(f"validating json attributes... {input_payload}")
+def validate_json_attributes(all_payload):
+    # logging.info(f"validating json attributes... {all_payload}")
 
     # TO DO: FIX THIS ONLY ONE MAP AT A TIME
-    input_payload = input_payload[0]
+    # input_payload = input_payload[0]
 
-    context = {}
-    try:
-        context["id"] = input_payload["id"]
-        context["orientation"] = input_payload["orientation"]
-        context["textPrimary"] = input_payload["textPrimary"]
-        context["textSecondary"] = input_payload["textSecondary"]
-        context["textCoordinates"] = input_payload["textCoordinates"]
-        context["tileLayer"] = input_payload["tileLayer"]
-        # context["stylingSpecs"] = input_payload["styling_specs"]
-        context["styling"] = input_payload["styling"]
-        context["tileZoomOffset"] = int(input_payload["tileZoomOffset"])
-        context["mapDimensionsIn"] = input_payload["mapDimensionsIn"]
-        context["hasText"] = ValueValidator.extract_valid_text_flag(input_payload)
-        context["bbox"] = ValueValidator.extract_valid_bbox_value(input_payload["bbox"])
+    all_context = []
+    for input_payload in all_payload:
 
-        context["textStylingSpecs"] = input_payload["text_styling_specs"]
-        context["isTransparentTextBlock"] = input_payload["isTransparentTextBlock"]
-        # bg image code.
-        logging.info("looking for bgImgCode in input_payload")
-        if "bgImgCode" in input_payload:
-            context["bgImgCode"] = input_payload["bgImgCode"]
-        else:
-            context["bgImgCode"] = ""
-        logging.info("bgImgCode: " + str(context["bgImgCode"]))
-
-        # TO DO: validate each pin in payload
-        context["pins"] = input_payload["pinList"]
-        context["size"] = input_payload["size"]
-
-        if "demo" in context["size"]:
-            context["is_mobile"] = True
-        else:
-            context["is_mobile"] = False
-
-        if context["is_mobile"]:
-            logging.info(
-                "BAD CODING: is_mobile is true so we automaticlly set the tileZoomOffset to 4. We will also be setting the mutiplier to 23 before we add text to the map"
+        context = {}
+        try:
+            context["id"] = input_payload["id"]
+            context["orientation"] = input_payload["orientation"]
+            context["textPrimary"] = input_payload["textPrimary"]
+            context["textSecondary"] = input_payload["textSecondary"]
+            context["textCoordinates"] = input_payload["textCoordinates"]
+            context["tileLayer"] = input_payload["tileLayer"]
+            # context["stylingSpecs"] = input_payload["styling_specs"]
+            context["styling"] = input_payload["styling"]
+            context["tileZoomOffset"] = int(input_payload["tileZoomOffset"])
+            context["mapDimensionsIn"] = input_payload["mapDimensionsIn"]
+            context["hasText"] = ValueValidator.extract_valid_text_flag(input_payload)
+            context["bbox"] = ValueValidator.extract_valid_bbox_value(
+                input_payload["bbox"]
             )
-            context["tileZoomOffset"] = 4
 
-        logging.info("value of tileZoomOffset: " + str(context["tileZoomOffset"]))
+            context["textStylingSpecs"] = input_payload["text_styling_specs"]
+            context["isTransparentTextBlock"] = input_payload["isTransparentTextBlock"]
+            # bg image code.
+            logging.info("looking for bgImgCode in input_payload")
+            if "bgImgCode" in input_payload:
+                context["bgImgCode"] = input_payload["bgImgCode"]
+            else:
+                context["bgImgCode"] = ""
+            logging.info("bgImgCode: " + str(context["bgImgCode"]))
 
-        context["zoom"] = (
-            ValueValidator.extract_valid_zoom_value(input_payload["zoom"])
-            + context["tileZoomOffset"]
-        )
+            # TO DO: validate each pin in payload
+            context["pins"] = input_payload["pinList"]
+            context["size"] = input_payload["size"]
 
-        # TO DO: add map_style to payload from commercejs (UI)
-        # if "map_style" not in input_payload:
-        #     logging.debug(f"map_style not in input_payload")
-        #     raise ValueError("map_style not in input_payload")
-        #     # context["map_style"] = ValueValidator.extract_valid_map_style_value("basic")
-        # else:
-        #     context["map_style"] = ValueValidator.extract_valid_map_style_value(
-        #         input_payload["map_style"]
-        #     )
+            if "demo" in context["size"]:
+                context["is_mobile"] = True
+            else:
+                context["is_mobile"] = False
 
-        # TO DO: add map_dimesnion to payload from commercejs (UI)
-        if "map_dimension" not in input_payload:
-            logging.info(f"map_dimension not in input_payload")
-            context["map_dimension"] = "_24_36"
-            context["poster_dimension"] = "_24_36"
-        else:
-            context[
-                "map_dimension"
-            ] = ValueValidator.extract_valid_print_dimension_value(
-                input_payload["print_dimension"]
+            if context["is_mobile"]:
+                logging.info(
+                    "BAD CODING: is_mobile is true so we automaticlly set the tileZoomOffset to 4. We will also be setting the mutiplier to 23 before we add text to the map"
+                )
+                context["tileZoomOffset"] = 4
+
+            logging.info("value of tileZoomOffset: " + str(context["tileZoomOffset"]))
+
+            context["zoom"] = (
+                ValueValidator.extract_valid_zoom_value(input_payload["zoom"])
+                + context["tileZoomOffset"]
             )
-            context["poster_dimesnion"] = "_24_36"
 
-        # Optional Elements
-        # if "pins" in input_payload:
-        #     context["pins"] = ValueValidator.extract_valid_pins_value(
-        #         input_payload["pinList"]
-        #     )
-        # else:
-        #     context["pins"] = None
+            # TO DO: add map_style to payload from commercejs (UI)
+            # if "map_style" not in input_payload:
+            #     logging.debug(f"map_style not in input_payload")
+            #     raise ValueError("map_style not in input_payload")
+            #     # context["map_style"] = ValueValidator.extract_valid_map_style_value("basic")
+            # else:
+            #     context["map_style"] = ValueValidator.extract_valid_map_style_value(
+            #         input_payload["map_style"]
+            #     )
 
-    except Exception as e:
-        logging.error("This is an error that wasn't caught in the ValueValidator...")
-        logging.error(e, exc_info=True)
-        raise ValueError("This is an error that wasn't caught in the ValueValidator...")
-    return context
+            # TO DO: add map_dimesnion to payload from commercejs (UI)
+            if "map_dimension" not in input_payload:
+                logging.info(f"map_dimension not in input_payload")
+                context["map_dimension"] = "_24_36"
+                context["poster_dimension"] = "_24_36"
+            else:
+                context[
+                    "map_dimension"
+                ] = ValueValidator.extract_valid_print_dimension_value(
+                    input_payload["print_dimension"]
+                )
+                context["poster_dimesnion"] = "_24_36"
+
+            # Optional Elements
+            # if "pins" in input_payload:
+            #     context["pins"] = ValueValidator.extract_valid_pins_value(
+            #         input_payload["pinList"]
+            #     )
+            # else:
+            #     context["pins"] = None
+
+        except Exception as e:
+            logging.error(
+                "This is an error that wasn't caught in the ValueValidator..."
+            )
+            logging.error(e, exc_info=True)
+            raise ValueError(
+                "This is an error that wasn't caught in the ValueValidator..."
+            )
+
+        all_context.append(context)
+
+    return all_context
 
 
 def validate_payload(args) -> dict:
@@ -189,6 +201,6 @@ def validate_payload(args) -> dict:
     #   - Validate pins
 
     # Validate values of json attributes
-    context = validate_json_attributes(input_payload=input_payload)
+    all_context = validate_json_attributes(all_payload=input_payload)
 
-    return context
+    return all_context
