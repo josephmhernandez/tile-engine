@@ -26,7 +26,7 @@ from src.engine.downloader import Downloader
 from src.engine.assembler import Assembler
 from src.models.bbox import Bbox
 
-from src.engine.validator import validate_payload
+from src.engine.validator import validate_payload, validate_schema, validate_json_attributes
 
 from src.models.icon import Icon
 from src.models.map import Map
@@ -36,12 +36,12 @@ from src.models.border_style import Border
 
 import logging
 import json
-from schema import Schema, And, Use, Optional, SchemaError
+import os
+from schema import SchemaError
 import settings
 import src.engine.engine_utils as engine_utils
 import PIL.Image
-
-import PIL.Image as Image
+from src.services.S3Writer import S3Writer
 
 from src.style_constants import TRANSPARENT_TILE_LAYERS
 
@@ -56,7 +56,7 @@ def run_tile_engine(context, verbose=False) -> int:
 
     logging.info("starting tile engine...")
     my_id = context["id"]
-    settings.IMAGE_FILE_NAME = f"map_{my_id}.png"
+    settings.IMAGE_FILE_NAME = f"map-{my_id}.png"
     logging.info(f"producing map...{settings.IMAGE_FILE_NAME}")
 
     logging.info("cleaing temp folder...")
@@ -84,10 +84,11 @@ def run_tile_engine(context, verbose=False) -> int:
 
     # Run Assembler (Border, style, wording, etc.)
     logging.info("Running Assembler...")
+    mapImg = None
     try:
         # Assemble map from downlaoded images
         logging.info("Assemble images")
-        Assembler.assemble_image(
+        mapImg = Assembler.assemble_image(
             folder_path=settings.TEMP_TILE_IMAGE_FOLDER,
             tile_grid=new_grid,
             output_img_name=settings.IMAGE_FILE_NAME,
@@ -101,8 +102,9 @@ def run_tile_engine(context, verbose=False) -> int:
     # Crop the image to the specific bbox
     logging.info("Croppig downloaded images to bbox display")
     try:
-        Assembler.crop_image(
-            context["bbox"],
+        mapImg = Assembler.crop_image(
+            img=mapImg,
+            map_box=context["bbox"],
             img_path=settings.IMAGE_FILE_NAME,
             output_path=settings.IMAGE_FILE_NAME,
             zoom=context["zoom"],
@@ -118,8 +120,9 @@ def run_tile_engine(context, verbose=False) -> int:
     try:
         if context["pins"] != None:
             logging.info(f"Adding {str(len(context['pins']))} pins to map image")
-            Assembler.add_pins_to_map(
-                context,
+            mapImg = Assembler.add_pins_to_map(
+                img=mapImg,
+                context=context,
                 input_path=settings.IMAGE_FILE_NAME,
                 output_path=settings.IMAGE_FILE_NAME,
                 verbose=verbose,
@@ -139,19 +142,21 @@ def run_tile_engine(context, verbose=False) -> int:
     # We need to resize according to the dpi for the rest of calculation for building the styling.
     try:
         logging.info("Resizing image to fit print format")
-        map_img = PIL.Image.open(settings.IMAGE_FILE_NAME)
+        # map_img = PIL.Image.open(settings.IMAGE_FILE_NAME)
+
+        # TO DO: set the settings.DPI variable here to maximum available instead of using DPI. 
         resize_width = int(context["mapDimensionsIn"]["map_width"] * settings.DPI)
         resize_height = int(context["mapDimensionsIn"]["map_height"] * settings.DPI)
-        size_map_img = map_img.size
+        size_map_img = mapImg.size
         logging.info(f"Image before resize: {size_map_img}")
         logging.info(f"Resizing image to ({resize_width}, {resize_height})")
         logging.info(
             f"want to be close to zero..... resizing info loss: {float(size_map_img[0] / size_map_img[1]) - float(resize_width / resize_height)}"
         )
-        map_img = map_img.resize((resize_width, resize_height))
-        map_img.save(settings.IMAGE_FILE_NAME)
+        mapImg = mapImg.resize((resize_width, resize_height))
+        # map_img.save(settings.IMAGE_FILE_NAME)
         if verbose:
-            map_img.save(settings.TEMP_RESIZED_OUTPUT)
+            mapImg.save(settings.TEMP_RESIZED_OUTPUT)
 
     except Exception as e:
         logging.error("Assembler returned an error")
@@ -176,7 +181,8 @@ def run_tile_engine(context, verbose=False) -> int:
                 #     + str(context["bgImgCode"])
                 # )
             else:
-                TransparencyTransformer.add_background_and_transparency(
+                mapImg = TransparencyTransformer.add_background_and_transparency(
+                    mapImg,
                     settings.IMAGE_FILE_NAME,
                     context["bgImgCode"],
                     output_path=settings.IMAGE_FILE_NAME,
@@ -226,7 +232,8 @@ def run_tile_engine(context, verbose=False) -> int:
                 )
                 context["mapDimensionsIn"]["map_pixel_multiplier"] = 23
 
-            Assembler.add_text(
+            mapImg = Assembler.add_text(
+                mapImg,
                 img_path=settings.IMAGE_FILE_NAME,
                 out_path=settings.IMAGE_FILE_NAME,
                 text=text,
@@ -244,7 +251,8 @@ def run_tile_engine(context, verbose=False) -> int:
     # Add white background to the map.
     logging.info("Adding white background to the image")
     try:
-        TransparencyTransformer.add_white_background(
+        mapImg = TransparencyTransformer.add_white_background(
+            mapImg,
             input_path=settings.IMAGE_FILE_NAME,
             output_path=settings.IMAGE_FILE_NAME,
         )
@@ -293,13 +301,42 @@ def run_tile_engine(context, verbose=False) -> int:
     #     logging.critical(e, exc_info=True)
     #     return engine_status_codes.ASSEMBLER_ADD_BORDER_FAILURE
 
+    # Save the image
+    logging.info("Saving image to S3")
+    if (os.environ.get("ENV", "").lower() == "dev"):
+        # Running docker container and local stack 
+        pass
+    elif (os.environ.get("ENV", "").lower() == "prod"):
+        # Save to S3 bucket
+        logging.info('[main: run_tile_engine] Running from prod. AWS ECS Task')
+        myWriter = S3Writer(environment="prod")
+        myWriter.write_to_s3(mapImg, settings.IMAGE_FILE_NAME) 
+
+    else:
+    # elif (os.environ["ENV"].lower() == "local"):
+        # LocalStack up. Running python from command line on local machine
+        # Save to localstack
+        logging.info('[main : run_tile_engine] Running python from command line. Saving image to LocalStack')
+        myWriter = S3Writer(environment="local")
+        logging.info('[main : run_tile_engine] Saving image to S3 bucket')
+        myWriter.write_to_s3(mapImg, settings.IMAGE_FILE_NAME) 
+        logging.info('[main : run_tile_engine] Listing all objects in S3 bucket')
+
+        myWriter.list_s3_objects()
+        
+    # else:
+    #     # Opperating locally from command line and save to fiiles 
+        
+
+    #     mapImg.save(settings.IMAGE_FILE_NAME)
+
     logging.info("Tile engine completed successfully")
     return engine_status_codes.ENGINE_SUCCESS
 
 
 def adjust_pil_settings():
     # Increase PIL image size limit
-    PIL.Image.MAX_IMAGE_PIXELS = 178956969
+    PIL.Image.MAX_IMAGE_PIXELS = 178956969 * 2
 
 
 def main(args, verbose=False) -> int:
@@ -317,7 +354,37 @@ def main(args, verbose=False) -> int:
 
     # Validate payload
     logging.info("Validating payload...")
-    all_context = validate_payload(args)
+    # logging.info('should print out varss....')
+    # logging.info(os.environ['AWS_REGION'])
+    # logging.info(os.environ['MAP_INPUT'])
+
+    # Try to get the payload from the environment variable
+    all_context = None
+    try:
+        payload = json.loads(os.environ["MAP_INPUT"])
+        logging.info("Payload is from environment variable")
+        # payload json string to dict 
+        validation_error_list =  validate_schema(input_payload_dict=payload)
+
+        if len(validation_error_list) > 0:
+            logging.debug("Error list not empty")
+            logging.error(
+                f"Error(s) validating payload: {str(len(validation_error_list))} errors"
+            )
+            raise SchemaError(validation_error_list)
+    
+        all_context = validate_json_attributes(all_payload=payload)
+
+    except Exception as e:
+        logging.error("Payload is not from environment variable. Doesn't stop. Checking args")
+        logging.error(e, exc_info=True)
+        # return engine_status_codes.PAYLOAD_VALIDATION_FAILURE
+
+    if (not all_context):
+        logging.info("Payload is not from environment variable. Getting it from args")
+        all_context = validate_payload(args)
+    
+
 
     # Run tile engine
     logging.info("Running tile engine...")

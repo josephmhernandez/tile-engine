@@ -16,7 +16,7 @@ pytest
 
 # Run Test with Logs outputted to console / whereever
 
-pytest --log-cli-level=INFO
+pytest --log-cli-level=INF
 
 # Run Specific Test
 
