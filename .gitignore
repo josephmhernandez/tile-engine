@@ -141,3 +141,8 @@ test/.DS_Store
 
 # cleaning up testings
 test/inputs/*
+
+temp/temp_output/*
+temp/tile_images/*
+
+resources/

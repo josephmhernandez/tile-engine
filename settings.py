@@ -2,7 +2,7 @@ import uuid
 
 # Engine Properties
 IMAGE_FILE_NAME = "all_skate_image.png"
-TEMP_TILE_IMAGE_FOLDER = "./src/tile_images/" + str(uuid.uuid4()) + "/"
+TEMP_TILE_IMAGE_FOLDER = "./temp/tile_images/" + str(uuid.uuid4()) + "/"
 
 
 # Tile properties
@@ -21,8 +21,10 @@ LOG_FILENAME = "logs.log"
 
 # Create random folder name for each run of the engine.
 # This is to avoid conflicts when running multiple engines at the same time.
-
-TEMP_OUTPUT_FOLDER = "src/temp_output/" + str(uuid.uuid4()) + "/"
+TEMP = "temp/"
+TEMP_OUTPUT = TEMP + 'temp_output/'
+TEMP_TILE_IMAGE = TEMP + 'tile_images/'
+TEMP_OUTPUT_FOLDER = TEMP + 'temp_output/' + str(uuid.uuid4()) + "/"
 
 TEMP_TEXT_OUTPUT_FOLDER = TEMP_OUTPUT_FOLDER + "temp_text/"
 TEMP_PIN_OUTPUT_FOLDER = TEMP_OUTPUT_FOLDER + "temp_pin/"

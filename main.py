@@ -26,7 +26,7 @@ from src.engine.downloader import Downloader
 from src.engine.assembler import Assembler
 from src.models.bbox import Bbox
 
-from src.engine.validator import validate_payload, validate_schema, validate_json_attributes
+from src.engine.validator import validate_payload, validate_schema, validate_json_attributes_for_list, validate_json_attributes
 
 from src.models.icon import Icon
 from src.models.map import Map
@@ -41,12 +41,12 @@ from schema import SchemaError
 import settings
 import src.engine.engine_utils as engine_utils
 import PIL.Image
-from src.services.S3Writer import S3Writer
+from src.services.CloudService import CloudService
 
 from src.style_constants import TRANSPARENT_TILE_LAYERS
 
 
-def run_tile_engine(context, verbose=False) -> int:
+def run_tile_engine(context, myCloudService, verbose=False) -> int:
     """
     context: contents of the poster payload
     verbose: flag, print images after each step to assembler_verbose/ for debugging
@@ -59,8 +59,10 @@ def run_tile_engine(context, verbose=False) -> int:
     settings.IMAGE_FILE_NAME = f"map-{my_id}.png"
     logging.info(f"producing map...{settings.IMAGE_FILE_NAME}")
 
-    logging.info("cleaing temp folder...")
-
+    logging.info("cleaning temp folder...")
+    engine_utils.create_empty_folder(settings.TEMP)
+    engine_utils.create_empty_folder(settings.TEMP_OUTPUT)
+    engine_utils.create_empty_folder(settings.TEMP_TILE_IMAGE)
     engine_utils.create_empty_folder(settings.TEMP_OUTPUT_FOLDER)
     engine_utils.create_empty_folder(settings.TEMP_TEXT_OUTPUT_FOLDER)
     engine_utils.create_empty_folder(settings.TEMP_PIN_OUTPUT_FOLDER)
@@ -303,26 +305,27 @@ def run_tile_engine(context, verbose=False) -> int:
 
     # Save the image
     logging.info("Saving image to S3")
-    if (os.environ.get("ENV", "").lower() == "dev"):
-        # Running docker container and local stack 
-        pass
-    elif (os.environ.get("ENV", "").lower() == "prod"):
-        # Save to S3 bucket
-        logging.info('[main: run_tile_engine] Running from prod. AWS ECS Task')
-        myWriter = S3Writer(environment="prod")
-        myWriter.write_to_s3(mapImg, settings.IMAGE_FILE_NAME) 
+    myCloudService.write_to_s3(mapImg, settings.IMAGE_FILE_NAME)
+    # if (os.environ.get("ENV", "").lower() == "dev"):
+    #     # Running docker container and local stack 
+    #     pass
+    # elif (os.environ.get("ENV", "").lower() == "prod"):
+    #     # Save to S3 bucket
+    #     logging.info('[main: run_tile_engine] Running from prod. AWS ECS Task')
+    #     myWriter = S3Writer(environment="prod")
+    #     myWriter.write_to_s3(mapImg, settings.IMAGE_FILE_NAME) 
 
-    else:
-    # elif (os.environ["ENV"].lower() == "local"):
-        # LocalStack up. Running python from command line on local machine
-        # Save to localstack
-        logging.info('[main : run_tile_engine] Running python from command line. Saving image to LocalStack')
-        myWriter = S3Writer(environment="local")
-        logging.info('[main : run_tile_engine] Saving image to S3 bucket')
-        myWriter.write_to_s3(mapImg, settings.IMAGE_FILE_NAME) 
-        logging.info('[main : run_tile_engine] Listing all objects in S3 bucket')
+    # else:
+    # # elif (os.environ["ENV"].lower() == "local"):
+    #     # LocalStack up. Running python from command line on local machine
+    #     # Save to localstack
+    #     logging.info('[main : run_tile_engine] Running python from command line. Saving image to LocalStack')
+    #     myWriter = S3Writer(environment="local")
+    #     logging.info('[main : run_tile_engine] Saving image to S3 bucket')
+    #     myWriter.write_to_s3(mapImg, settings.IMAGE_FILE_NAME) 
+    #     logging.info('[main : run_tile_engine] Listing all objects in S3 bucket')
 
-        myWriter.list_s3_objects()
+    #     myWriter.list_s3_objects()
         
     # else:
     #     # Opperating locally from command line and save to fiiles 
@@ -354,15 +357,25 @@ def main(args, verbose=False) -> int:
 
     # Validate payload
     logging.info("Validating payload...")
-    # logging.info('should print out varss....')
-    # logging.info(os.environ['AWS_REGION'])
-    # logging.info(os.environ['MAP_INPUT'])
 
-    # Try to get the payload from the environment variable
+    all_enivronment_variables = dict(os.environ)
+    logging.debug("[main: main] All environment variables " + str(all_enivronment_variables))
+    # logging.info(all_enivronment_variables)     
+    # Try to get the payload from dynamo db
+    req_id = all_enivronment_variables["REQUEST_ID"] if "REQUEST_ID" in all_enivronment_variables else "woof"
+    logging.info("[main: main] Request id is " + req_id)
+    env = all_enivronment_variables["ENV"] if "ENV" in all_enivronment_variables else "local"
+    logging.info("[main: main] Environment is " + env)
+    myCloudService = CloudService(environment=env)
     all_context = None
+    email = None
     try:
-        payload = json.loads(os.environ["MAP_INPUT"])
-        logging.info("Payload is from environment variable")
+        logging.info("Trying to get payload from dynamo db... " + req_id)
+        
+        payload, email = myCloudService.get_map(request_id=req_id)
+        logging.info("Payload is from dynamo db")
+        logging.info("Payload is type " + str(type(payload)))
+        logging.info("[main : main] Email address is " + email)
         # payload json string to dict 
         validation_error_list =  validate_schema(input_payload_dict=payload)
 
@@ -372,13 +385,43 @@ def main(args, verbose=False) -> int:
                 f"Error(s) validating payload: {str(len(validation_error_list))} errors"
             )
             raise SchemaError(validation_error_list)
-    
-        all_context = validate_json_attributes(all_payload=payload)
-
+        
+        all_context = validate_json_attributes(input_payload=payload)
     except Exception as e:
-        logging.error("Payload is not from environment variable. Doesn't stop. Checking args")
+        logging.error("Payload is not from dynamo db. Doesn't stop.")
         logging.error(e, exc_info=True)
-        # return engine_status_codes.PAYLOAD_VALIDATION_FAILURE
+        return engine_status_codes.PAYLOAD_VALIDATION_FAILURE
+
+    # Try to get the payload from the environment variable
+    # try:
+    #     all_enivronment_variables = dict(os.environ)
+    #     logging.info("All environment variables")
+    #     logging.info(all_enivronment_variables)        
+        
+    #     logging.info("Trying to get payload from environment variable... " + (all_enivronment_variables["MAP_INPUT"]))
+    #     logging.info("payload is type " + str(type(all_enivronment_variables["MAP_INPUT"])))
+    #     print(all_enivronment_variables["MAP_INPUT"])
+    #     payload = json.loads(all_enivronment_variables["MAP_INPUT"])
+    #     logging.info("Payload is from environment variable")
+    #     logging.info("Payload is type " + str(type(payload)))
+    #     print("Payload is ")
+    #     print(payload)
+    #     # payload json string to dict 
+    #     validation_error_list =  validate_schema(input_payload_dict=payload)
+
+    #     if len(validation_error_list) > 0:
+    #         logging.debug("Error list not empty")
+    #         logging.error(
+    #             f"Error(s) validating payload: {str(len(validation_error_list))} errors"
+    #         )
+    #         raise SchemaError(validation_error_list)
+    
+    #     all_context = validate_json_attributes(all_payload=payload)
+
+    # except Exception as e:
+    #     logging.error("Payload is not from environment variable. Doesn't stop. Checking args")
+    #     logging.error(e, exc_info=True)
+    #     # return engine_status_codes.PAYLOAD_VALIDATION_FAILURE
 
     if (not all_context):
         logging.info("Payload is not from environment variable. Getting it from args")
@@ -394,12 +437,18 @@ def main(args, verbose=False) -> int:
     adjust_pil_settings()
     for context in all_context:
 
-        engine_code = run_tile_engine(context, verbose=verbose)
+        engine_code = run_tile_engine(context, myCloudService=myCloudService, verbose=verbose)
         if engine_code != engine_status_codes.ENGINE_SUCCESS:
             logging.error(
                 f"Tile engine failed with status code {engine_code} for context {str(context)}"
             )
             return engine_code
+        else:
+            # write update to dynamo db
+            logging.info("[main: main] Updating dynamo db record")
+            myCloudService.update_record(
+                email=email, request_id=req_id
+            )
     return engine_code
 
 
