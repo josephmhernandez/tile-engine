@@ -1,4 +1,5 @@
 
+import io
 import json
 import logging
 import boto3
@@ -6,6 +7,8 @@ from datetime import date
 from io import BytesIO
 import src.constants.aws_constants as aws_constants
 from boto3.dynamodb.conditions import Key
+from src.constants.bg_images import BG_FOLDER_PATH, BG_IMG_URL_MAP
+from PIL import Image
 
 class CloudService: 
   # Class that reads data from dynamo database 
@@ -20,11 +23,11 @@ class CloudService:
         
         logging.info('[CloudService : __init__] Creating Dynamo resource client for environment: ' + self.environment)
         if self.environment == 'local':
-            self.dynamodb_client = boto3.resource('dynamodb', region_name='us-east-1', endpoint_url='http://localhost:4566')
+            self.dynamodb_client = boto3.resource('dynamodb', region_name='us-east-2', endpoint_url='http://localhost:4566', aws_access_key_id='test', aws_secret_access_key='test')
             self.s3_client = boto3.client('s3',region_name='us-east-1', endpoint_url='http://localhost:4566')
         elif self.environment == 'dev':
-            self.dynamodb_client = boto3.resource('dynamodb', region_name='us-east-1', endpoint_url='http://localhost:4566')
-            self.s3_client = boto3.client('s3',region_name='us-east-1', endpoint_url='http://localhost:4566')
+            self.dynamodb_client = boto3.resource('dynamodb', region_name='us-east-2', endpoint_url='http://host.docker.internal:4566', aws_access_key_id='test', aws_secret_access_key='test')
+            self.s3_client = boto3.client('s3',region_name='us-east-1', endpoint_url='http://host.docker.internal:4566')
         elif self.environment == 'prod':
             self.bucket_name = 'public-maps-map-your-memory'
             self.dynamodb_client = boto3.resource('dynamodb', region_name='us-east-2')
@@ -103,3 +106,20 @@ class CloudService:
         # List all the objects in the bucket
         for obj in self.s3_client.list_objects(Bucket=self.bucket_name)['Contents']:
             logging.info('[CloudService: write_to_s3] S3 object key: ' + obj['Key'])
+
+    def get_bg_image(self, bg_img_code, bg_img_ratio):
+        # Get map from dynamo
+        logging.info('[CloudService: get_bg_image] Getting bg image from S3 with code: ' + bg_img_code)
+        bg_bucket_name = 'tile-engine-resources'
+        object_key = "bg_images"  + BG_IMG_URL_MAP[bg_img_code][bg_img_ratio]["local"]
+
+        logging.info('[CloudService: get_bg_image] Getting bg image from S3 with bucket: ' + bg_bucket_name)
+        logging.info('[CloudService: get_bg_image] Getting bg image from S3 with key: ' + object_key)
+
+        # Download the image from S3 as a byte stream
+        response = self.s3_client.get_object(Bucket=bg_bucket_name, Key=object_key)
+        image_bytes = response['Body'].read()
+
+        # Load the image from the byte stream using PIL
+        image = Image.open(io.BytesIO(image_bytes))
+        return image

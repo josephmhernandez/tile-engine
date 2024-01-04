@@ -1,0 +1,73 @@
+[
+  {
+    "pinList": [
+      {
+        "id": "3b4f2475-d493-46e7-98f7-5bae4a6fbe06",
+        "size": 40,
+        "style": "heart-black-white",
+        "position": { "lat": 40.75453936473234, "lng": -73.46008300781251 }
+      },
+      {
+        "id": "f93d8771-1f66-4afc-b7ce-5f42777353e8",
+        "size": 40,
+        "style": "diamond-white-black",
+        "position": { "lat": 40.66397287638688, "lng": -73.51226806640626 }
+      }
+    ],
+    "location": "",
+    "center": [40.72644570551446, -73.73611450195314],
+    "zoom": 10,
+    "orientation": "landscape",
+    "textPrimary": "",
+    "textSecondary": "",
+    "textCoordinates": "",
+    "styling": "basic",
+    "size": "_24_36",
+    "tileLayer": "img-bg-black",
+    "bbox": "{\"_southWest\":{\"lat\":40.43858586704331,\"lng\":-74.30465698242189},\"_northEast\":{\"lat\":41.0130657870063,\"lng\":-73.16757202148439}}",
+    "tileZoomOffset": 2,
+    "quantity": 1,
+    "description": "Map near 221-51 92nd Ave, Queens, NY 11428, USA",
+    "id": "21804bf7-14f8-4850-82dc-24c43c1de45a",
+    "name": "Digital Print - Personalized Map",
+    "isTransparentTextBlock": false,
+    "text_styling_specs": {
+      "id": "img-bg-black",
+      "iconImg": "/tan-ocean.png",
+      "url": "https://api.maptiler.com/maps/11489910-a9d8-4e58-a989-e00a490cf934/{z}/{x}/{y}.jpg?key=fLxXsh3K0MP3y21i3bJs",
+      "isOverlay": true,
+      "text": {
+        "fontFamily": {
+          "primary": "Semplicita",
+          "secondary": "Semplicita",
+          "coordinate": "Semplicita"
+        },
+        "size": { "primary": "24", "secondary": "12", "coordinate": "8" },
+        "size_demo": { "primary": "8", "secondary": "4", "coordinate": "3" },
+        "color": {
+          "background": "#000000",
+          "primary": "#FFFFFF",
+          "secondary": "#FFFFFF",
+          "coordinate": "#FFFFFF"
+        },
+        "color_transparent": {
+          "background": "#0000",
+          "primary": "#000000",
+          "secondary": "#000000",
+          "coordinate": "#000000"
+        },
+        "textBlock": { "padding": "8px", "rounded": "8px", "spacing": "1" },
+        "text_block_demo": {
+          "padding": "1px",
+          "rounded": "3px",
+          "spacing": "1"
+        }
+      }
+    },
+    "mapDimensionsIn": {
+      "map_width": 35,
+      "map_height": 23,
+      "map_pixel_multiplier": 23
+    }
+  }
+]

@@ -12,9 +12,10 @@ class TransparencyTransformer:
     @staticmethod
     def add_background_and_transparency(
         img,
-        input_path: str,
-        bg_img_code: str,
-        output_path: str,
+        bgImg,
+        # input_path: str,
+        # bg_img_code: str,
+        # output_path: str,
         bg_img_ratio: str = BG_RATIO_DEFAULT,
         bg_location: str = BG_LOCATION_DEFAULT,
     ):
@@ -24,14 +25,15 @@ class TransparencyTransformer:
         tile_img = img
 
         # load the bg image.
-        logging.info("Looking for bg img: " + bg_img_code + " " + bg_img_ratio)
-        bg_img_path = (
-            BG_FOLDER_PATH[bg_location]
-            + BG_IMG_URL_MAP[bg_img_code][bg_img_ratio][bg_location]
-        )
+        # logging.info("Looking for bg img: " + bg_img_code + " " + bg_img_ratio)
+        # bg_img_path = (
+        #     BG_FOLDER_PATH[bg_location]
+        #     + BG_IMG_URL_MAP[bg_img_code][bg_img_ratio][bg_location]
+        # )
 
-        logging.info("Loading bg img: " + bg_img_path)
-        bg_img = Image.open(bg_img_path)
+        # logging.info("Loading bg img: " + bg_img_path)
+        # bg_img = Image.open(bg_img_path)
+        bg_img = bgImg
 
         # Prepare Alpha layer image
         logging.info("Preparing alpha layer grayscale image")

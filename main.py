@@ -183,11 +183,16 @@ def run_tile_engine(context, myCloudService, verbose=False) -> int:
                 #     + str(context["bgImgCode"])
                 # )
             else:
+                logging.info("[main: run_tile_engine] Tile layer is ideal for transparency")
+                logging.info("[main: run_tile_engine] Getting background image from S3")
+                bgImg = myCloudService.get_bg_image(context["bgImgCode"], bg_img_ratio="2_3")
+
                 mapImg = TransparencyTransformer.add_background_and_transparency(
                     mapImg,
-                    settings.IMAGE_FILE_NAME,
-                    context["bgImgCode"],
-                    output_path=settings.IMAGE_FILE_NAME,
+                    # settings.IMAGE_FILE_NAME,
+                    bgImg,
+                    # bg_img_code=context["bgImgCode"],
+                    # output_path=settings.IMAGE_FILE_NAME,
                 )
     except Exception as e:
         logging.error("TransparencyTransformer returned an error")
@@ -359,7 +364,7 @@ def main(args, verbose=False) -> int:
     logging.info("Validating payload...")
 
     all_enivronment_variables = dict(os.environ)
-    logging.debug("[main: main] All environment variables " + str(all_enivronment_variables))
+    logging.info("[main: main] All environment variables " + str(all_enivronment_variables))
     # logging.info(all_enivronment_variables)     
     # Try to get the payload from dynamo db
     req_id = all_enivronment_variables["REQUEST_ID"] if "REQUEST_ID" in all_enivronment_variables else "woof"

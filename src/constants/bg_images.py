@@ -2,6 +2,7 @@
 # BG_FOLDER_PATH is the path your bg images are stored.
 BG_FOLDER_PATH = {
     "local": "/Users/joseph/Documents/workspace/bg_images",
+    "dev": "/tile-engine-resources/bg_images",
 }
 
 # BG_IMG_URL_MAP is a dictionary with Image Codes as keys and a dictionary and locatio of the images as values of the size selected.
