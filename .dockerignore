@@ -1,0 +1,16 @@
+temp/temp_output/*
+temp/tile_images/*
+
+test/
+
+dev_environment/
+
+docker-compose.yaml
+cloudformation-example.yaml
+
+run_dev.sh
+run_local.sh
+
+inputs/
+tile-engine-resources/
+tile-engine-resources/*

@@ -60,13 +60,14 @@ class Assembler:
             y_offset += height  # Update the height
 
         # Save the final image
-        composite.save("./" + output_img_name)
+        # composite.save("./" + output_img_name)
 
         if verbose:
             logging.info(f"saving assembled image to {settings.TEMP_OUTPUT_FOLDER}")
             composite.save(settings.TEMP_OUTPUT_FOLDER + "assemble-tiles.png")
 
-        logging.info("output image: " + output_img_name)
+        # logging.info("output image: " + output_img_name)
+        return composite
 
     @staticmethod
     def check_image_folder_exists(folder_path):
@@ -74,7 +75,7 @@ class Assembler:
         print("TO DO: check image folder existance")
 
     @staticmethod
-    def crop_image(map_box, img_path, output_path, zoom, verbose=False):
+    def crop_image(img, map_box, img_path, output_path, zoom, verbose=False):
         logging.info(
             "cropping the image to the correct size. Input: "
             + img_path
@@ -83,7 +84,7 @@ class Assembler:
         )
 
         # Open Image
-        img = Image.open(img_path)
+        # img = Image.open(img_path)
         img_width, img_height = img.size
 
         # Create tile_box (it is larger than map box)
@@ -146,16 +147,18 @@ class Assembler:
             img.height - m_pixel_diff_bottom,
         )
 
+        # It will not change the original image
         im1 = img.crop(m_crop_payload)
 
-        logging.info("Save cropped image to " + output_path)
         if verbose:
             logging.info(f"saving cropped image to {settings.TEMP_OUTPUT_FOLDER}")
             im1.save(settings.TEMP_OUTPUT_FOLDER + "crop-to-bbox.png")
-        im1.save(output_path)
+        
+        return im1
 
     @staticmethod
     def add_pin(
+        img,
         context,
         input_path: str,
         output_path: str,
@@ -167,7 +170,8 @@ class Assembler:
         # Save map to output location with pin on map
         # logging.info(f"map context: {context}")
         # Open image
-        map_img = Image.open(input_path)
+        # map_img = Image.open(input_path)
+        map_img = img
 
         # Make sure map is expected size
         # map_dim = src.engine.engine_utils.get_print_pixel_size(context["map_dimension"])
@@ -212,16 +216,15 @@ class Assembler:
             )
 
         # Save map with pin saved as " + output_path)
-        map_img.save(output_path)
+        # map_img.save(output_path)
+        return map_img
 
     @staticmethod
     def add_pins_to_map(
-        context, input_path: str, output_path: str, verbose: bool = False
+       img, context, input_path: str, output_path: str, verbose: bool = False
     ) -> None:
         id = 0
         for p in context["pins"]:
-            print("pin")
-            print(p)
             curr_pin = Pin(
                 icon=p["style"],
                 location=[p["position"]["lng"], p["position"]["lat"]],
@@ -230,7 +233,8 @@ class Assembler:
                 color=p["color"] if "color" in p else "#000000",
             )
             logging.info("adding pin: " + str(curr_pin))
-            Assembler.add_pin(
+            img = Assembler.add_pin(
+                img,
                 context,
                 input_path=input_path,
                 output_path=output_path,
@@ -239,6 +243,8 @@ class Assembler:
                 id=id,
             )
             id += 1
+    
+        return img
 
     @staticmethod
     def isHexColor(color: str) -> bool:
@@ -373,6 +379,7 @@ class Assembler:
 
     @staticmethod
     def add_text(
+        img,
         img_path: str,
         out_path: str,
         text: dict,
@@ -431,7 +438,8 @@ class Assembler:
         """
 
         # Total size of image block
-        map_img = Image.open(img_path)
+        # map_img = Image.open(img_path)
+        map_img = img
 
         # Get text block background color, text color
         colorDict = context["textStylingSpecs"]["text"]["color"]
@@ -701,4 +709,5 @@ class Assembler:
             )
             map_img.save(settings.TEMP_TEXT_OUTPUT_FOLDER + "map-with-text.png")
 
-        map_img.save(out_path)
+        return map_img
+        # map_img.save(out_path)

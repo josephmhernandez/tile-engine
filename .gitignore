@@ -138,3 +138,12 @@ src/tile_images/*
 test/.DS_Store
 
 .DS_Store
+
+# cleaning up testings
+test/inputs/*
+
+temp/temp_output/*
+temp/tile_images/*
+
+resources/
+tile-engine-resources/
