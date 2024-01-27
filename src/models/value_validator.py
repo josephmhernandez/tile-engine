@@ -92,7 +92,8 @@ class ValueValidator:
     def extract_valid_zoom_value(zoom: int) -> int:
         if zoom > 13 or zoom < 4:
             logging.error("zoom is outside range [ ] : " + str(zoom))
-            raise ValueError(f"zoom is outside range : 13 < {zoom} < 4")
+            logging.info("NOT Raising error anymore")
+            # raise ValueError(f"zoom is outside range : 13 < {zoom} < 4")
 
         return zoom
 
